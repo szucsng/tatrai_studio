@@ -10,8 +10,19 @@ const nextConfig: NextConfig = {
     // Teljes minőség az optimalizáláshoz
     minimumCacheTTL: 31536000,
     formats: ['image/webp'],
-    // Külső domain engedélyezése ha szükséges
-    remotePatterns: [],
+    // Helyi upload mappák engedélyezése
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '**',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
+        pathname: '/uploads/**',
+      },
+    ],
   },
 };
 

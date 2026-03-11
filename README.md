@@ -1,26 +1,35 @@
-# Képmegosztó Alkalmazás
+# Tatrái Stúdió – Képgaléria Alkalmazás
 
-Modern Next.js alapú képmegosztó alkalmazás eseményekkel, admin felülettel és nagy felbontású képek kezelésével.
+Modern Next.js alapú fotógaléria alkalmazás eseménykezeléssel, admin felülettel, automatikus thumbnail generálással és email alapú hitelesítéssel.
 
 ## Funkciók
 
-- 🏠 **Főoldal** - Személyes bemutatkozás
-- 🖼️ **Képgaléria** - Eseményekre bontva
-- 🔍 **Kép nagyítás** - Zoom funkcióval
-- 🔐 **Admin felület** - Biztonságos bejelentkezéssel
-- 📤 **Több kép feltöltése** - Egyszerre több kép feltöltése
-- 📱 **Reszponzív dizájn** - Minden eszközön jól működik
-- 🗄️ **SQLite adatbázis** - Egyszerű, gyors adattárolás
+- 🏠 **Főoldal** – Személyes/stúdiós bemutatkozás interaktív 3D háttérrel (Three.js)
+- 🖼️ **Képgaléria** – Eseményekre bontva, lightbox nézettel
+- 🔍 **Kép nagyítás** – Yet Another React Lightbox alapú zoom és navigáció
+- 🔐 **Admin felület** – Email + jelszó alapú bejelentkezéssel (Better Auth)
+- 📧 **Email hitelesítés** – Regisztrációkor email-megerősítés, jelszó-visszaállítás
+- 📤 **Tömeges képfeltöltés** – Egyszerre több kép feltöltése, automatikus thumbnail és medium verzió generálással (Sharp)
+- 🖼️ **Automatikus thumbnail** – 300×200 és 800px szélességű medium verzió minden képhez
+- 👥 **Többfelhasználós admin** – Szerepkör alapú jogosultságok (admin / user)
+- 📱 **Reszponzív dizájn** – Tailwind CSS, minden eszközön
+- 🗄️ **MySQL adatbázis** – Prisma ORM-mel
 
 ## Technológiák
 
-- **Next.js 16** - React keretrendszer
-- **TypeScript** - Típusbiztonság
-- **Tailwind CSS** - Modern styling
-- **Prisma** - ORM adatbázis kezeléshez
-- **NextAuth.js** - Autentikáció
-- **Yet Another React Lightbox** - Kép nagyítás
-- **SQLite** - Adatbázis
+| Csomag | Verzió | Leírás |
+|---|---|---|
+| Next.js | 16 | React keretrendszer (App Router) |
+| TypeScript | 5 | Típusbiztonság |
+| Tailwind CSS | 4 | Utility-first styling |
+| Prisma | 5 | ORM adatbázis kezeléshez |
+| Better Auth | 1.5 | Email/jelszó alapú autentikáció |
+| MySQL2 | 3 | Adatbázis driver |
+| Sharp | 0.34 | Képfeldolgozás, thumbnail generálás |
+| Yet Another React Lightbox | 3 | Kép nagyítás / galériamegjelenítő |
+| Three.js | 0.167 | 3D háttér animáció |
+| Nodemailer | 8 | Email küldés |
+| Lucide React | 0.577 | Ikonok |
 
 ## Telepítés és Indítás
 
@@ -29,164 +38,157 @@ Modern Next.js alapú képmegosztó alkalmazás eseményekkel, admin felülettel
 npm install
 ```
 
-### 2. Adatbázis előkészítése
-Az adatbázis már inicializálva van, de ha újra kellene:
+### 2. Környezeti változók beállítása
+
+Hozz létre egy `.env` fájlt a projekt gyökerében:
+
+```env
+# MySQL adatbázis
+DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/DBNAME"
+
+# Better Auth
+BETTER_AUTH_SECRET="valami-eros-titok-valtoztasd-meg"
+BETTER_AUTH_URL="http://localhost:2736"
+
+# Email (SMTP)
+SMTP_HOST="smtp.example.com"
+SMTP_PORT="587"
+SMTP_USER="user@example.com"
+SMTP_PASS="jelszo"
+SMTP_FROM="noreply@example.com"
+
+# Admin setup (egyszeri admin létrehozáshoz)
+ADMIN_SETUP_SECRET="admin-setup-secret"
+```
+
+### 3. Adatbázis előkészítése
+
 ```bash
-npx prisma migrate dev --name init
+npx prisma migrate deploy
 npx prisma generate
 ```
 
-### 3. Admin felhasználó létrehozása
-
-A fejlesztői szerver elindítása után hozz létre egy admin felhasználót az API segítségével:
+### 4. Admin felhasználó létrehozása
 
 ```bash
-# Indítsd el a szervert
-npm run dev
+npm run create-admin
 ```
 
-Majd egy másik terminálban vagy Postman-nel küldj egy POST kérést:
+Vagy az API-n keresztül (szerver futása közben):
 
 ```bash
-curl -X POST http://localhost:3000/api/setup/create-admin \\
-  -H "Content-Type: application/json" \\
-  -d "{\"username\":\"admin\",\"password\":\"admin123\",\"secret\":\"create-admin-secret-2024\"}"
+curl -X POST http://localhost:2736/api/setup/create-admin \
+  -H "Content-Type: application/json" \
+  -d "{\"name\":\"Admin\",\"email\":\"admin@example.com\",\"password\":\"admin123\",\"secret\":\"admin-setup-secret\"}"
 ```
 
-Vagy használd a böngészőt és a következő JavaScript kódot a console-ban (F12):
-
-```javascript
-fetch('http://localhost:3000/api/setup/create-admin', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    username: 'admin',
-    password: 'admin123',
-    secret: 'create-admin-secret-2024'
-  })
-}).then(res => res.json()).then(console.log)
-```
-
-### 4. Alkalmazás indítása
+### 5. Alkalmazás indítása
 
 ```bash
 npm run dev
 ```
 
-Az alkalmazás elérhető lesz: [http://localhost:3000](http://localhost:3000)
+Az alkalmazás elérhető: [http://localhost:2736](http://localhost:2736)
 
 ## Használat
 
 ### Főoldal
-- Látogasd meg a főoldalt: `http://localhost:3000`
-- Itt találod a bemutatkozást és a navigációt
+- `http://localhost:2736` – bemutatkozó oldal 3D animált háttérrel
 
 ### Galéria
-- Kattints a "Galéria" menüpontra vagy látogasd meg: `http://localhost:3000/galeria`
-- Az események listájából válaszd ki a kívánt eseményt
-- Kattints bármelyik képre a nagyításhoz és navigáláshoz
+- `http://localhost:2736/galeria` – összes esemény listája
+- Eseményre kattintva megnyílnak a képek lightbox nézetben
 
 ### Admin Felület
 
-1. **Bejelentkezés**
-   - Menj a `http://localhost:3000/admin/login` címre
-   - Jelentkezz be a létrehozott admin felhasználóval:
-     - Felhasználónév: `admin`
-     - Jelszó: `admin123`
-
-2. **Esemény létrehozása**
-   - Az admin felületen töltsd ki az űrlapot:
-     - Esemény neve (kötelező)
-     - Leírás (opcionális)
-     - Dátum
-   - Válassz ki egy vagy több képet (többszörös kiválasztás támogatott)
-   - Kattints a "Esemény létrehozása" gombra
-
-3. **Kijelentkezés**
-   - Kattints a "Kijelentkezés" gombra a navigációs sávban
+1. **Bejelentkezés:** `http://localhost:2736/admin/login`
+2. **Esemény kezelés:** új esemény létrehozása, meglévők szerkesztése/törlése
+3. **Képfeltöltés:** eseményhez képek feltöltése (JPEG, PNG, WebP) – automatikusan generálódik thumbnail és medium verzió
+4. **Felhasználók:** admin szintű felhasználók kezelése
+5. **Profil:** saját jelszó és profiladatok módosítása
 
 ## Fájlstruktúra
 
 ```
-kepweb/
+tatrai_studio/
 ├── src/
 │   ├── app/
 │   │   ├── admin/
-│   │   │   ├── login/
-│   │   │   │   └── page.tsx          # Admin bejelentkezés
-│   │   │   └── page.tsx               # Admin felület
+│   │   │   ├── login/               # Admin bejelentkezés
+│   │   │   ├── forgot-password/     # Jelszó-visszaállítás kérés
+│   │   │   ├── reset-password/      # Jelszó-visszaállítás
+│   │   │   ├── verify-email/        # Email megerősítés
+│   │   │   └── page.tsx             # Admin főoldal
 │   │   ├── api/
 │   │   │   ├── admin/
-│   │   │   │   └── events/
-│   │   │   │       └── route.ts       # Esemény létrehozás API
-│   │   │   ├── auth/
-│   │   │   │   └── [...nextauth]/
-│   │   │   │       └── route.ts       # NextAuth konfiguráció
-│   │   │   ├── events/
-│   │   │   │   └── [id]/
-│   │   │   │       └── route.ts       # Esemény lekérés API
-│   │   │   └── setup/
-│   │   │       └── create-admin/
-│   │   │           └── route.ts       # Admin létrehozás API
+│   │   │   │   ├── events/          # Esemény CRUD API
+│   │   │   │   ├── profile/         # Profil frissítés API
+│   │   │   │   └── users/           # Felhasználó kezelés API
+│   │   │   ├── auth/                # Better Auth endpoint
+│   │   │   │   ├── forgot-password/ # Jelszó-visszaállítás email
+│   │   │   │   ├── reset-password/  # Új jelszó beállítás
+│   │   │   │   ├── resend-verification/ # Megerősítő email újraküldés
+│   │   │   │   ├── session/         # Session lekérés
+│   │   │   │   └── verify-email/    # Email megerősítés
+│   │   │   ├── events/[id]/         # Publikus esemény lekérés
+│   │   │   ├── setup/create-admin/  # Egyszeri admin létrehozás
+│   │   │   └── video/               # Videó proxy
 │   │   ├── galeria/
-│   │   │   ├── [id]/
-│   │   │   │   └── page.tsx           # Esemény részletek
-│   │   │   └── page.tsx               # Galéria lista
-│   │   └── page.tsx                   # Főoldal
+│   │   │   ├── [id]/                # Esemény részletek + képek
+│   │   │   └── page.tsx             # Galéria lista
+│   │   ├── setup/                   # Setup oldal
+│   │   └── page.tsx                 # Főoldal
+│   ├── components/
+│   │   ├── ColorBends.jsx           # Three.js 3D háttér
+│   │   ├── Footer.tsx               # Lábléc
+│   │   ├── Icons.tsx                # SVG ikonok
+│   │   ├── ImageCard.tsx            # Galéria képkártya
+│   │   └── ThemeToggle.tsx          # Témaváltó
 │   ├── lib/
-│   │   ├── auth.ts                    # NextAuth konfiguráció
-│   │   └── prisma.ts                  # Prisma kliens
-│   ├── middleware.ts                  # Route védelem
+│   │   ├── auth.ts                  # Better Auth konfiguráció
+│   │   ├── auth-client.ts           # Kliens oldali auth
+│   │   ├── email.ts                 # Nodemailer email küldés
+│   │   └── prisma.ts                # Prisma kliens
 │   └── types/
-│       └── next-auth.d.ts             # NextAuth típusok
+│       └── next-auth.d.ts           # Típusdefiníciók
 ├── prisma/
-│   ├── schema.prisma                  # Adatbázis séma
-│   └── dev.db                         # SQLite adatbázis
+│   ├── schema.prisma                # Adatbázis séma
+│   └── migrations/                  # Prisma migrációk
 ├── public/
-│   └── uploads/                       # Feltöltött képek
+│   ├── team/                        # Csapattagok képei
+│   └── uploads/                     # Feltöltött képek (esemény ID szerint)
+├── scripts/
+│   └── create-admin.ts              # Admin létrehozó script
 └── README.md
 ```
-
-## Környezeti változók
-
-A `.env` fájlban:
-
-```env
-DATABASE_URL="file:./dev.db"
-NEXTAUTH_SECRET="your-secret-key-change-this-in-production-please"
-NEXTAUTH_URL="http://localhost:3000"
-```
-
-**Fontos:** Éles környezetben mindenképpen változtasd meg a `NEXTAUTH_SECRET` értékét egy erős, véletlenszerű stringre!
 
 ## Adatbázis séma
 
 ### User
-- id: String (cuid)
-- username: String (unique)
-- password: String (hashed)
+- `id`, `email` (unique), `name`, `role` (admin/user)
+- `emailVerified`, `resetToken`, `verificationToken`
+- kapcsolat: `sessions`, `accounts`, `organizedEvents`
 
 ### Event
-- id: String (cuid)
-- name: String
-- description: String?
-- date: DateTime
-- images: Image[]
+- `id`, `name`, `description?`, `date`
+- kapcsolat: `images[]`, `organizers[]`
 
 ### Image
-- id: String (cuid)
-- filename: String
-- path: String
-- eventId: String
+- `id`, `filename`, `path` (teljes kép), `thumbPath` (300×200), `mediumPath` (800px)
+- kapcsolat: `event`
+
+### EventOrganizer
+- `eventId`, `userId` – eseményhez rendelt szerkesztők
+
+### Session / Account / Verification
+- Better Auth által kezelt táblák
 
 ## Fejlesztés
 
-### Adatbázis módosítása
-
-Ha módosítod a Prisma sémát:
+### Adatbázis séma módosítása
 
 ```bash
-npx prisma migrate dev --name your_migration_name
+npx prisma migrate dev --name leiras
 npx prisma generate
 ```
 
@@ -197,43 +199,15 @@ npm run build
 npm start
 ```
 
-## Testreszabás
-
-### Főoldal szöveg
-Módosítsd a `src/app/page.tsx` fájlban a személyes bemutatkozást:
-- Cseréld le a `[Neved vagyok]` szöveget
-- Írd át a bekezdéseket saját szövegedre
-
-### Admin létrehozás titkos kulcs
-A `src/app/api/setup/create-admin/route.ts` fájlban módosítsd:
-```typescript
-if (secret !== 'create-admin-secret-2024') {
-```
-
-### Styling
-A Tailwind CSS osztályokat módosíthatod bármelyik komponensben.
-
 ## Biztonság
 
 - Jelszavak bcrypt-tel hashelve
-- Admin felület védve middleware-rel
-- Session-alapú autentikáció
-- Csak bejelentkezett felhasználók hozhatnak létre eseményeket
-
-## Gyakori problémák
-
-### "Nincs bejelentkezve" hiba
-- Ellenőrizd, hogy bejelentkeztél-e az admin felületre
-- Próbáld meg újra bejelentkezni
-
-### Képek nem töltődnek be
-- Ellenőrizd, hogy a `public/uploads` mappa létezik és írható
-- Győződj meg róla, hogy a képek megfelelő formátumúak (jpg, png, webp)
-
-### Adatbázis hiba
-- Futtasd újra: `npx prisma generate`
-- Ellenőrizd a `DATABASE_URL` értékét a `.env` fájlban
+- Email-megerősítés regisztrációkor
+- Session-alapú autentikáció (Better Auth)
+- Middleware-védett admin útvonalak
+- Szerepkör alapú hozzáférés (admin / user)
+- Jelszó-visszaállítás biztonságos token alapján
 
 ## Licenc
 
-Ez egy egyedi projekt, szabadon használható és módosítható.
+MIT – szabadon használható és módosítható.

@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { LockIcon } from '@/components/Icons'
 
 function ResetPasswordForm() {
   const [password, setPassword] = useState('')
@@ -69,7 +70,9 @@ function ResetPasswordForm() {
           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-200/30 to-purple-200/30 rounded-full blur-3xl -z-10"></div>
           
           <div className="text-center mb-8">
-            <div className="text-5xl mb-4">🔐</div>
+            <div className="flex justify-center mb-4">
+              <LockIcon className="w-16 h-16 text-indigo-600" />
+            </div>
             <h2 className="text-3xl font-extrabold">
               <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                 Új jelszó beállítása

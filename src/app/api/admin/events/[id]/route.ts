@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import { existsSync } from 'fs'
 import { headers } from 'next/headers'
+import sharp from 'sharp'
 
 export const runtime = 'nodejs'
 
@@ -80,22 +81,57 @@ export async function PUT(
       const uploadDir = join(process.cwd(), 'public', 'uploads', event.id)
       await mkdir(uploadDir, { recursive: true })
 
-      const imagePromises = files.map(async (file, index) => {
+      const imagePromises = files.map(async (file) => {
         const bytes = await file.arrayBuffer()
         const buffer = Buffer.from(bytes)
         
-        // Fájlnév generálása időbélyeggel és egyedi indexszel
+        // Fájlnév generálása időbélyeggel és eredeti fájlnévvel
         const timestamp = Date.now()
-        const uniqueId = `${timestamp}-${index}`
-        const originalExt = file.name.substring(file.name.lastIndexOf('.'))
-        const filename = `${uniqueId}${originalExt}`
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const filename = `${timestamp}-${safeName}`
         const filepath = join(uploadDir, filename)
         await writeFile(filepath, buffer)
+
+        const baseFilename = filename.replace(/\.[^.]+$/, '')
+        const isVideo = /\.(mp4|mov|avi|mkv|webm|m4v)$/i.test(file.name)
+
+        let thumbPathValue = `/uploads/${event.id}/${filename}`
+        let mediumPathValue = `/uploads/${event.id}/${filename}`
+
+        if (!isVideo) {
+          // Thumbnail generálás (300x300 WebP)
+          const thumbFilename = `${baseFilename}_thumb.webp`
+          const thumbPath = join(uploadDir, thumbFilename)
+          try {
+            await sharp(buffer)
+              .resize(300, 300, { fit: 'cover', position: 'center', withoutEnlargement: false })
+              .webp({ quality: 80 })
+              .toFile(thumbPath)
+            thumbPathValue = `/uploads/${event.id}/${thumbFilename}`
+          } catch (err: any) {
+            console.error('Thumbnail hiba:', err.message)
+          }
+
+          // Medium kép generálás (800x800 WebP)
+          const mediumFilename = `${baseFilename}_medium.webp`
+          const mediumPath = join(uploadDir, mediumFilename)
+          try {
+            await sharp(buffer)
+              .resize(800, 800, { fit: 'cover', position: 'center', withoutEnlargement: false })
+              .webp({ quality: 85 })
+              .toFile(mediumPath)
+            mediumPathValue = `/uploads/${event.id}/${mediumFilename}`
+          } catch (err: any) {
+            console.error('Medium kép hiba:', err.message)
+          }
+        }
 
         return prisma.image.create({
           data: {
             filename: file.name,
             path: `/uploads/${event.id}/${filename}`,
+            thumbPath: thumbPathValue,
+            mediumPath: mediumPathValue,
             eventId: event.id
           }
         })

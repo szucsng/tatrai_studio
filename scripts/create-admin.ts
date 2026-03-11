@@ -22,7 +22,8 @@ async function main() {
     data: {
       email,
       name,
-      emailVerified: false
+      emailVerified: new Date(),
+      role: 'admin'
     }
   })
 

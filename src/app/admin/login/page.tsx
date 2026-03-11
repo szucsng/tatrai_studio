@@ -4,6 +4,8 @@ import { signIn } from '@/lib/auth-client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import ColorBends from '@/components/ColorBends'
+import { LockIcon } from '@/components/Icons'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -71,16 +73,38 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 relative">
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <ColorBends
+          className=""
+          style={{}}
+          rotation={0}
+          speed={0.20}
+          colors={["#ff0000","#00ff00","#0000ff"]}
+          transparent={false}
+          autoRotate={0.00}
+          scale={1.00}
+          frequency={1.80}
+          warpStrength={1.00}
+          mouseInfluence={1.00}
+          parallax={0.50}
+          noise={0.10}
+        />
+      </div>
+      
       <div className="max-w-md w-full">
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200/50 p-8 relative overflow-hidden">
+        <div className="bg-[#2D3436]/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#E67E22]/30 p-8 relative overflow-hidden">
           {/* Decorative gradient */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-200/30 to-purple-200/30 rounded-full blur-3xl -z-10"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#F39C12]/30 to-[#E67E22]/20 rounded-full blur-3xl -z-10"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#FFE5B4]/40 to-[#F39C12]/30 rounded-full blur-3xl -z-10"></div>
           
           <div className="text-center mb-8">
-            <div className="text-5xl mb-4">🔐</div>
+            <div className="flex justify-center mb-4">
+              <LockIcon className="w-16 h-16 text-[#F39C12]" />
+            </div>
             <h2 className="text-3xl font-extrabold">
-              <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#F39C12] via-[#FFA726] to-[#E67E22] bg-clip-text text-transparent">
                 Admin Bejelentkezés
               </span>
             </h2>
@@ -88,7 +112,7 @@ export default function LoginPage() {
           
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl">
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl backdrop-blur-sm">
                 {error}
                 {needsVerification && email && (
                   <div className="mt-3">
@@ -96,7 +120,7 @@ export default function LoginPage() {
                       type="button"
                       onClick={handleResendVerification}
                       disabled={resendLoading}
-                      className="text-sm text-red-700 underline hover:text-red-800 font-semibold disabled:opacity-50"
+                      className="text-sm text-red-300 underline hover:text-red-200 font-semibold disabled:opacity-50"
                     >
                       {resendLoading ? 'Küldés...' : 'Megerősítő email újraküldése'}
                     </button>
@@ -106,13 +130,13 @@ export default function LoginPage() {
             )}
 
             {resendMessage && (
-              <div className="bg-blue-50 border border-blue-200 text-blue-600 px-4 py-3 rounded-xl text-sm">
+              <div className="bg-[#F39C12]/10 border border-[#F39C12]/30 text-[#F39C12] px-4 py-3 rounded-xl text-sm backdrop-blur-sm">
                 {resendMessage}
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-[#BDC3C7] mb-2">
                 Email
               </label>
               <input
@@ -120,19 +144,19 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                className="w-full px-4 py-3 bg-[#1A1D1F]/50 border border-[#E67E22]/30 text-[#FFF8E7] rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none placeholder-[#636E72]"
                 required
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-[#BDC3C7]">
                   Jelszó
                 </label>
                 <Link
                   href="/admin/forgot-password"
-                  className="text-sm text-indigo-600 hover:text-indigo-700 font-semibold hover:underline transition-colors"
+                  className="text-sm text-[#F39C12] hover:text-[#E67E22] font-semibold hover:underline transition-colors"
                 >
                   Elfelejtett jelszó?
                 </Link>
@@ -142,7 +166,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                className="w-full px-4 py-3 bg-[#1A1D1F]/50 border border-[#E67E22]/30 text-[#FFF8E7] rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none placeholder-[#636E72]"
                 required
               />
             </div>
@@ -150,11 +174,11 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="w-full bg-gradient-to-r from-[#F39C12] to-[#E67E22] hover:from-[#FFA726] hover:to-[#F39C12] text-[#2D3436] font-bold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-[#E67E22]/50"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
@@ -166,18 +190,13 @@ export default function LoginPage() {
             </button>
 
             <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">vagy</span>
-              </div>
+              <div className="w-full border-t border-[#E67E22]/20"></div>
             </div>
 
             <div className="text-center">
               <Link
                 href="/"
-                className="text-sm text-gray-600 hover:text-gray-800 font-medium hover:underline transition-colors"
+                className="text-sm text-[#BDC3C7] hover:text-[#F39C12] font-medium hover:underline transition-colors"
               >
                 ← Vissza a főoldalra
               </Link>

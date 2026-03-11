@@ -9,11 +9,14 @@ import "yet-another-react-lightbox/styles.css"
 import Zoom from "yet-another-react-lightbox/plugins/zoom"
 import Video from "yet-another-react-lightbox/plugins/video"
 import ColorBends from "@/components/ColorBends"
+import { UsersIcon, VideoIcon } from "@/components/Icons"
 
 interface Image {
   id: string
   filename: string
   path: string
+  thumbPath?: string | null
+  mediumPath?: string | null
 }
 
 interface Event {
@@ -55,36 +58,6 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
         }
       })
   }, [id, searchParams])
-
-  if (!event || !event.images) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
-
-  const slides = event.images.map(img => {
-    if (isVideoFile(img.filename)) {
-      return {
-        type: 'video' as const,
-        sources: [
-          {
-            src: img.path,
-            type: 'video/mp4',
-          }
-        ],
-        width: 1920,
-        height: 1080,
-      }
-    }
-    return {
-      src: img.path,
-      alt: img.filename,
-      width: 3840,
-      height: 2160,
-    }
-  })
 
   const handleDownload = async (imagePath: string, filename: string) => {
     try {
@@ -148,6 +121,53 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
     }
   }
 
+  if (!event || !event.images) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  const slides = event.images.map(img => {
+    if (isVideoFile(img.filename)) {
+      return {
+        type: 'video' as const,
+        sources: [
+          {
+            src: img.path,
+            type: 'video/mp4',
+          }
+        ],
+        width: 1920,
+        height: 1080,
+      }
+    }
+    return {
+      src: img.path,
+      srcSet: img.mediumPath ? [
+        {
+          src: img.thumbPath || img.path,
+          width: 300,
+          height: 300,
+        },
+        {
+          src: img.mediumPath,
+          width: 800,
+          height: 800,
+        },
+        {
+          src: img.path,
+          width: 3840,
+          height: 2160,
+        }
+      ] : undefined,
+      alt: img.filename,
+      width: 3840,
+      height: 2160,
+    }
+  })
+
   return (
     <div className="min-h-screen relative">
       {/* Animated Background */}
@@ -169,7 +189,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
         />
       </div>
       
-      <nav className="bg-[#FFFBF0]/80 dark:bg-[#2D3436]/80 backdrop-blur-xl shadow-sm border-b border-[#FFE5B4]/50 dark:border-[#E67E22]/20 sticky top-0 z-50">
+      <nav className="bg-[#2D3436]/80 backdrop-blur-xl shadow-sm border-b border-[#E67E22]/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -186,7 +206,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
             <div className="flex items-center space-x-4">
               <Link 
                 href="/galeria" 
-                className="text-[#2D3436] dark:text-[#FFF8E7] hover:text-[#E67E22] dark:hover:text-[#F39C12] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#E67E22]/10 dark:hover:bg-[#E67E22]/20 border border-transparent hover:border-[#E67E22]/30 flex items-center gap-2"
+                className="text-[#FFF8E7] hover:text-[#F39C12] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#E67E22]/20 border border-transparent hover:border-[#E67E22]/30 flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -199,16 +219,16 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
       </nav>
 
       <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#FFFBF0]/70 dark:bg-[#2D3436]/70 backdrop-blur-xl rounded-2xl shadow-xl border border-[#FFE5B4]/50 dark:border-[#E67E22]/30 p-8 mb-8">
+        <div className="bg-[#2D3436]/70 backdrop-blur-xl rounded-2xl shadow-xl border border-[#E67E22]/30 p-8 mb-8">
           <h1 className="text-4xl font-extrabold mb-2">
-            <span className="bg-gradient-to-r from-[#E67E22] via-[#F39C12] to-[#FFA726] dark:from-[#F39C12] dark:via-[#FFA726] dark:to-[#E67E22] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#F39C12] via-[#FFA726] to-[#E67E22] bg-clip-text text-transparent">
               {event.name}
             </span>
           </h1>
           {event.description && (
-            <p className="text-[#636E72] dark:text-[#BDC3C7] text-lg mb-3">{event.description}</p>
+            <p className="text-[#BDC3C7] text-lg mb-3">{event.description}</p>
           )}
-          <div className="flex items-center gap-4 text-sm text-[#636E72] dark:text-[#BDC3C7] mb-3">
+          <div className="flex items-center gap-4 text-sm text-[#BDC3C7] mb-3">
             <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -229,12 +249,13 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
           </div>
           {event.organizers && event.organizers.length > 0 && (
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-[#636E72] dark:text-[#BDC3C7] font-medium">👥 Szervezők:</span>
+              <UsersIcon className="w-4 h-4 text-[#BDC3C7]" />
+              <span className="text-[#BDC3C7] font-medium">Szervezők:</span>
               <div className="flex flex-wrap gap-2">
                 {event.organizers.map((organizer) => (
                   <span 
                     key={organizer.user.id} 
-                    className="bg-[#E67E22]/10 dark:bg-[#E67E22]/20 text-[#E67E22] dark:text-[#F39C12] px-3 py-1 rounded-full text-sm font-medium"
+                    className="bg-[#E67E22]/20 text-[#F39C12] px-3 py-1 rounded-full text-sm font-medium"
                   >
                     {organizer.user.name}
                   </span>
@@ -257,19 +278,22 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                 {isVideoFile(image.filename) ? (
                   <div className="relative w-full h-full bg-gray-900 flex items-center justify-center">
                     <div className="text-center text-white">
-                      <div className="text-6xl mb-4">🎬</div>
+                      <div className="flex justify-center mb-4">
+                        <VideoIcon className="w-16 h-16 text-[#F39C12]" />
+                      </div>
                       <div className="text-lg font-semibold mb-2">Videó</div>
                       <div className="text-sm opacity-75">Kattints a lejátszáshoz vagy letöltéshez</div>
                     </div>
                   </div>
                 ) : (
                   <Image
-                    src={image.path}
+                    src={image.thumbPath || image.path}
                     alt={image.filename}
                     fill
-                    quality={100}
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    loading="lazy"
+                    unoptimized
                   />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -346,6 +370,67 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
             controls: true,
             autoPlay: false,
             playsInline: true,
+          }}
+          toolbar={{
+            buttons: [
+              <button
+                key="share"
+                type="button"
+                aria-label="Megosztás"
+                className="yarl__button"
+                onClick={() => {
+                  const imageId = event?.images[currentImageIndex]?.id
+                  if (imageId) {
+                    handleShare(imageId)
+                  }
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="yarl__icon"
+                >
+                  <circle cx="18" cy="5" r="3" />
+                  <circle cx="6" cy="12" r="3" />
+                  <circle cx="18" cy="19" r="3" />
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                </svg>
+              </button>,
+              <button
+                key="download"
+                type="button"
+                aria-label="Letöltés"
+                className="yarl__button"
+                onClick={() => {
+                  const image = event?.images[currentImageIndex]
+                  if (image) {
+                    handleDownload(image.path, image.filename)
+                  }
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="yarl__icon"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </button>,
+              "close",
+            ],
           }}
         />
 

@@ -13,16 +13,19 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000",
   session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 5 * 60,
-    },
+    updateAge: 60 * 60,
+    expiresIn: 60 * 60 * 24 * 7,
   },
   trustedOrigins: [
     process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000",
     "http://localhost:3000",
     "http://localhost:3001"
   ],
+  // Advanced: hibakezelés MySQL 1020 error esetén
+  advanced: {
+    // Disableli az automatic session touch-ot minden requestnél
+    disableCSRFCheck: false,
+  },
 })
 
 export type Session = typeof auth.$Infer.Session

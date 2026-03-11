@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import Image from 'next/image'
+import { EmailIcon, PhoneIcon, LocationIcon, ClockIcon, ComputerIcon } from './Icons'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -9,36 +11,32 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Section */}
           <div className="space-y-4">
-            <h3 className="text-white font-bold text-lg mb-4">🏔️ Tátrai Stúdió</h3>
+            <h3 className="text-white font-bold text-lg mb-4">Stúdió:</h3>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Professzionális fotó és videó galéria szolgáltatás a Tátra környéki események számára. 
-              Örökítsd meg életed legszebb pillanatait velünk!
+              A Tátrai Stúdió egy dinamikus és kreatív csapat, amely több mint 5 éve örökíti meg a legfontosabb pillanatokat. Alapítója és vezető fotósa, Tátrai Levente,
+              valamint a CAMCrew videós csapata elkötelezettek amellett, hogy minden rendezvényt egyedi látásmóddal örökítsenek meg, legyen szó esküvőkről,
+              céges eseményekről vagy családi ünnepekről.
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="text-white font-semibold text-lg mb-4">Gyors linkek</h3>
+            <h3 className="text-white font-semibold text-lg mb-4">Tátrai Stúdió tagjai:</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-sm hover:text-white transition-colors flex items-center gap-2">
-                  <span>🏠</span> Főoldal
-                </Link>
+                  <p>Tátrai Levente</p>
               </li>
               <li>
-                <Link href="/galeria" className="text-sm hover:text-white transition-colors flex items-center gap-2">
-                  <span>📸</span> Galéria
-                </Link>
+                  <p>Tamba Megyer</p>
               </li>
               <li>
-                <Link href="/admin/login" className="text-sm hover:text-white transition-colors flex items-center gap-2">
-                  <span>🔐</span> Bejelentkezés
-                </Link>
+                  <p>Tamás Bence</p>
               </li>
               <li>
-                <Link href="/admin" className="text-sm hover:text-white transition-colors flex items-center gap-2">
-                  <span>⚙️</span> Admin panel
-                </Link>
+                  <p>Mitrik Zalán</p>
+              </li>
+              <li>
+                <p>Szűcs Noel Gergő</p>
               </li>
             </ul>
           </div>
@@ -48,23 +46,23 @@ export default function Footer() {
             <h3 className="text-white font-semibold text-lg mb-4">Kapcsolat</h3>
             <ul className="space-y-2 text-sm">
               <li className="flex items-start gap-2">
-                <span className="text-lg">📧</span>
+                <EmailIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <a href="mailto:info@tatraistudio.hu" className="hover:text-white transition-colors">
                   info@tatraistudio.hu
                 </a>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-lg">📞</span>
+                <PhoneIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <a href="tel:+36301234567" className="hover:text-white transition-colors">
                   +36 30 123 4567
                 </a>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-lg">📍</span>
+                <LocationIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>Tátra környéke, Magyarország</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-lg">🕐</span>
+                <ClockIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>H-P: 9:00 - 18:00</span>
               </li>
             </ul>
@@ -81,7 +79,7 @@ export default function Footer() {
                 className="w-10 h-10 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all hover:scale-110"
                 aria-label="Facebook"
               >
-                <span className="text-xl">📘</span>
+                <Image src="/facebook.svg" alt="Facebook" width={24} height={24} className="text-white" />
               </a>
               <a 
                 href="https://instagram.com" 
@@ -90,7 +88,7 @@ export default function Footer() {
                 className="w-10 h-10 bg-gray-800 hover:bg-pink-600 rounded-lg flex items-center justify-center transition-all hover:scale-110"
                 aria-label="Instagram"
               >
-                <span className="text-xl">📷</span>
+                <Image src="/instagram.svg" alt="Instagram" width={24} height={24} className="text-white" />
               </a>
               <a 
                 href="https://youtube.com" 
@@ -99,7 +97,7 @@ export default function Footer() {
                 className="w-10 h-10 bg-gray-800 hover:bg-red-600 rounded-lg flex items-center justify-center transition-all hover:scale-110"
                 aria-label="YouTube"
               >
-                <span className="text-xl">🎥</span>
+                <Image src="/youtube.svg" alt="YouTube" width={24} height={24} className="text-white" />
               </a>
             </div>
             <div className="space-y-2">
@@ -123,7 +121,10 @@ export default function Footer() {
               © {currentYear} Tátrai Stúdió. Minden jog fenntartva.
             </p>
             <div className="flex items-center gap-4 text-xs text-gray-500">
-              <span>Készítette: 💻 WebDev Team</span>
+              <div className="flex items-center gap-1">
+                <ComputerIcon className="w-3 h-3" />
+                <span>Készítette: Tátrai Stúdió</span>
+              </div>
               <span>|</span>
               <span>Verzió: 2.0.0</span>
             </div>

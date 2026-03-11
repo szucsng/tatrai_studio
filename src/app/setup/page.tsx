@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { SettingsIcon } from '@/components/Icons'
 
 export default function SetupPage() {
   const [email, setEmail] = useState('admin@example.com')
@@ -41,7 +42,10 @@ export default function SetupPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">🔧 Admin Felhasználó Létrehozása</h1>
+        <h1 className="text-3xl font-bold mb-8 flex items-center gap-3">
+          <SettingsIcon className="w-8 h-8 text-blue-400" />
+          Admin Felhasználó Létrehozása
+        </h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Form */}

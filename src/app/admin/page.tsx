@@ -6,13 +6,14 @@ import { signOut } from '@/lib/auth-client'
 import Link from 'next/link'
 import Image from 'next/image'
 import ColorBends from '@/components/ColorBends'
+import { CalendarIcon, UsersIcon, GalleryIcon, EditIcon, TrashIcon, UploadIcon } from '@/components/Icons'
 
 type Event = {
   id: string
   name: string
   description: string | null
   date: string
-  images: { id: string; filename: string; path: string }[]
+  images: { id: string; filename: string; path: string; thumbPath?: string; createdAt?: string }[]
   organizers?: { user: { id: string; name: string; email: string } }[]
 }
 
@@ -60,6 +61,9 @@ export default function AdminPage() {
   })
 
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const [uploadStatus, setUploadStatus] = useState('')
+  const [uploadingFile, setUploadingFile] = useState('')
 
   // Helper function to detect video files
   const isVideoFile = (filename: string): boolean => {
@@ -159,6 +163,8 @@ export default function AdminPage() {
     setLoading(true)
     setError('')
     setSuccess('')
+    setUploadProgress(0)
+    setUploadStatus('')
 
     if (!editingEvent && (!selectedFiles || selectedFiles.length === 0)) {
       setError('Kérlek válassz legalább egy fájlt (képet vagy videót)!')
@@ -185,6 +191,10 @@ export default function AdminPage() {
       
       const method = editingEvent ? 'PUT' : 'POST'
 
+      // Progress tracking
+      let uploadedSize = 0
+      const totalSize = Array.from(selectedFiles || []).reduce((sum, file) => sum + file.size, 0)
+
       const response = await fetch(url, {
         method,
         body: formDataToSend,
@@ -192,6 +202,9 @@ export default function AdminPage() {
 
       if (response.ok) {
         setSuccess(editingEvent ? 'Esemény sikeresen frissítve!' : 'Esemény sikeresen létrehozva!')
+        setUploadStatus('Feldolgozás... Kérjük várjon!')
+        setUploadProgress(100)
+        
         setFormData({
           name: '',
           description: '',
@@ -203,7 +216,20 @@ export default function AdminPage() {
         const fileInput = document.getElementById('images') as HTMLInputElement
         if (fileInput) fileInput.value = ''
         
-        await loadEvents()
+        // Kicsit vár majd az első refresh
+        setTimeout(async () => {
+          await loadEvents()
+          setUploadStatus('Képek feldolgozása... Kérjük várjon!')
+        }, 1000)
+        
+        // Automata refresh néhány másodperc múlva hogy biztos az összes thumbnail létre legyen hozva
+        setTimeout(async () => {
+          await loadEvents()
+          setUploadProgress(0)
+          setUploadStatus('')
+          setSuccess('Esemény és képek sikeresen feltöltve! Minden kép elérhető a weboldalon.')
+        }, 4000)
+        
         setTimeout(() => setSuccess(''), 3000)
       } else {
         const data = await response.json()
@@ -223,6 +249,13 @@ export default function AdminPage() {
     setSuccess('')
 
     try {
+      const updateData: { name?: string; currentPassword?: string; newPassword?: string } = {}
+
+      // Név frissítés, ha megváltozott
+      if (profileData.name && profileData.name !== user?.name) {
+        updateData.name = profileData.name
+      }
+
       // Ha jelszó módosítás is van
       if (profileData.newPassword) {
         if (profileData.newPassword !== profileData.confirmPassword) {
@@ -237,19 +270,44 @@ export default function AdminPage() {
           return
         }
 
-        // Jelszó módosítás API hívás (ezt implementálni kell)
-        // Itt most csak a név frissítés megy
+        if (!profileData.currentPassword) {
+          setError('Add meg a jelenlegi jelszavadat a módosításhoz')
+          setLoading(false)
+          return
+        }
+
+        updateData.currentPassword = profileData.currentPassword
+        updateData.newPassword = profileData.newPassword
       }
 
-      // Név frissítés (ezt is implementálni kell az API-ban)
-      setSuccess('Profil sikeresen frissítve!')
-      setProfileData({
-        ...profileData,
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
+      // Ha nincs mit frissíteni
+      if (Object.keys(updateData).length === 0) {
+        setError('Nincs mit frissíteni')
+        setLoading(false)
+        return
+      }
+
+      // API hívás a profil frissítéséhez
+      const response = await fetch('/api/admin/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
       })
-      setTimeout(() => setSuccess(''), 3000)
+
+      if (response.ok) {
+        setSuccess('Profil sikeresen frissítve!')
+        await loadUserData()
+        setProfileData({
+          ...profileData,
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        })
+        setTimeout(() => setSuccess(''), 3000)
+      } else {
+        const data = await response.json()
+        setError(data.error || 'Hiba történt a profil frissítése során')
+      }
     } catch (error) {
       setError('Hiba történt a profil frissítése során')
     } finally {
@@ -358,33 +416,35 @@ export default function AdminPage() {
       </div>
       
       {/* Navigation */}
-      <nav className="bg-black/80 backdrop-blur-md shadow-sm border-b border-gray-800/50 sticky top-0 z-50">
+      <nav className="bg-[#2D3436]/80 backdrop-blur-xl shadow-sm border-b border-[#E67E22]/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center gap-3">
               <Image 
                 src="/logo.png" 
                 alt="Logo" 
-                width={40} 
-                height={40} 
+                width={50} 
+                height={50} 
+                priority
                 className="object-contain"
               />
-              <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-[#F39C12] to-[#E67E22] bg-clip-text text-transparent">
                 Admin Panel
               </Link>
             </div>
             <div className="flex items-center space-x-4">
               <Link 
                 href="/galeria" 
-                className="text-gray-300 hover:text-indigo-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-indigo-50"
+                className="text-[#FFF8E7] hover:text-[#F39C12] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#E67E22]/20 border border-transparent hover:border-[#E67E22]/30 flex items-center gap-2"
               >
-                🖼️ Galéria
+                <GalleryIcon className="w-4 h-4" />
+                Galéria
               </Link>
-              <div className="flex items-center space-x-3 px-4 py-2 bg-gray-800 rounded-lg">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="flex items-center space-x-3 px-4 py-2 bg-[#E67E22]/20 rounded-lg border border-[#E67E22]/30">
+                <div className="w-8 h-8 bg-gradient-to-r from-[#E67E22] to-[#F39C12] rounded-full flex items-center justify-center text-white font-bold">
                   {user?.name?.charAt(0).toUpperCase() || 'A'}
                 </div>
-                <span className="text-sm font-medium text-white">{user?.name || 'Admin'}</span>
+                <span className="text-sm font-medium text-[#FFF8E7]">{user?.name || 'Admin'}</span>
               </div>
               <button
                 onClick={handleLogout}
@@ -399,54 +459,60 @@ export default function AdminPage() {
 
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* Tab Navigation */}
-        <div className="bg-black/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-800/50 p-2 mb-8">
+        <div className="bg-[#2D3436]/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#E67E22]/30 p-2 mb-8">
           <div className="flex space-x-2">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'dashboard'
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
-                  : 'text-gray-300 hover:bg-gray-800'
+                  ? 'bg-gradient-to-r from-[#E67E22] to-[#F39C12] text-white shadow-md'
+                  : 'text-[#FFF8E7] hover:bg-[#E67E22]/20'
               }`}
             >
-              📊 Dashboard
+              <CalendarIcon className={`w-5 h-5 ${activeTab === 'dashboard' ? 'text-white' : 'text-[#F39C12]'}`} />
+              Dashboard
             </button>
             <button
               onClick={() => {
                 setActiveTab('events')
                 loadUsers()
               }}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'events'
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
-                  : 'text-gray-300 hover:bg-gray-800'
+                  ? 'bg-gradient-to-r from-[#E67E22] to-[#F39C12] text-white shadow-md'
+                  : 'text-[#FFF8E7] hover:bg-[#E67E22]/20'
               }`}
             >
-              📅 Események
+              <CalendarIcon className={`w-5 h-5 ${activeTab === 'events' ? 'text-white' : 'text-[#F39C12]'}`} />
+              Események
             </button>
             <button
               onClick={() => setActiveTab('profile')}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'profile'
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
-                  : 'text-gray-300 hover:bg-gray-800'
+                  ? 'bg-gradient-to-r from-[#E67E22] to-[#F39C12] text-white shadow-md'
+                  : 'text-[#FFF8E7] hover:bg-[#E67E22]/20'
               }`}
             >
-              👤 Profil
+              <UsersIcon className={`w-5 h-5 ${activeTab === 'profile' ? 'text-white' : 'text-[#F39C12]'}`} />
+              Profil
             </button>
-            <button
-              onClick={() => {
-                setActiveTab('organizers')
-                loadUsers()
-              }}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all ${
-                activeTab === 'organizers'
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
-                  : 'text-gray-300 hover:bg-gray-800'
-              }`}
-            >
-              👥 Szervezők
-            </button>
+            {(user?.role === 'admin' || user?.role === 'organizer') && (
+              <button
+                onClick={() => {
+                  setActiveTab('organizers')
+                  loadUsers()
+                }}
+                className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                  activeTab === 'organizers'
+                    ? 'bg-gradient-to-r from-[#E67E22] to-[#F39C12] text-white shadow-md'
+                    : 'text-[#FFF8E7] hover:bg-[#E67E22]/20'
+                }`}
+              >
+                <UsersIcon className={`w-5 h-5 ${activeTab === 'organizers' ? 'text-white' : 'text-[#F39C12]'}`} />
+                Szervezők
+              </button>
+            )}
           </div>
         </div>
 
@@ -455,27 +521,31 @@ export default function AdminPage() {
           <div className="space-y-8">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl shadow-xl p-6 text-white">
+              <div className="bg-gradient-to-br from-[#E67E22] to-[#F39C12] rounded-2xl shadow-xl p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-indigo-100 text-sm font-medium">Összes esemény</p>
+                    <p className="text-orange-100 text-sm font-medium">Összes esemény</p>
                     <p className="text-4xl font-bold mt-2">{stats.totalEvents}</p>
                   </div>
-                  <div className="text-5xl opacity-20">📅</div>
+                  <div className="opacity-20">
+                    <CalendarIcon className="w-16 h-16 text-white" />
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-xl p-6 text-white">
+              <div className="bg-gradient-to-br from-[#F39C12] to-[#E67E22] rounded-2xl shadow-xl p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-purple-100 text-sm font-medium">Összes fájl</p>
+                    <p className="text-yellow-100 text-sm font-medium">Összes fájl</p>
                     <p className="text-4xl font-bold mt-2">{stats.totalImages}</p>
                   </div>
-                  <div className="text-5xl opacity-20">🖼️</div>
+                  <div className="opacity-20">
+                    <GalleryIcon className="w-16 h-16 text-white" />
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl shadow-xl p-6 text-white">
+              <div className="bg-gradient-to-br from-[#D35400] to-[#E67E22] rounded-2xl shadow-xl p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-pink-100 text-sm font-medium">Új események (30 nap)</p>
@@ -487,8 +557,8 @@ export default function AdminPage() {
             </div>
 
             {/* Recent Events */}
-            <div className="bg-black/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-800/50 p-8">
-              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            <div className="bg-[#2D3436]/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#E67E22]/30 p-8">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#E67E22] to-[#F39C12] bg-clip-text text-transparent">
                 Legutóbbi események
               </h2>
               {events.slice(0, 5).length === 0 ? (
@@ -498,14 +568,14 @@ export default function AdminPage() {
                   {events.slice(0, 5).map((event) => (
                     <div key={event.id} className="flex items-center justify-between p-4 border border-gray-700 rounded-xl hover:shadow-md transition-all bg-gray-900/50">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900">{event.name}</h3>
+                        <h3 className="font-semibold text-zinc-400">{event.name}</h3>
                         <p className="text-sm text-gray-400">
                           {new Date(event.date).toLocaleDateString('hu-HU')} • {event.images.length} fájl
                         </p>
                       </div>
                       <button
                         onClick={() => handleEdit(event)}
-                        className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all"
+                        className="px-4 py-2 bg-gradient-to-r from-[#E67E22] to-[#F39C12] text-white rounded-lg text-sm font-medium hover:shadow-lg transition-all"
                       >
                         Szerkesztés
                       </button>
@@ -516,25 +586,27 @@ export default function AdminPage() {
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-black/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-800/50 p-8">
-              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            <div className="bg-[#2D3436]/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#E67E22]/30 p-8">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#E67E22] to-[#F39C12] bg-clip-text text-transparent">
                 Gyors műveletek
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button
                   onClick={() => setActiveTab('events')}
-                  className="p-6 border-2 border-indigo-800 rounded-xl hover:border-indigo-400 hover:bg-gray-900 transition-all text-left"
+                  className="p-6 border-2 border-[#E67E22]/50 rounded-xl hover:border-[#E67E22] hover:bg-[#E67E22]/20 transition-all text-left"
                 >
                   <div className="text-3xl mb-2">➕</div>
-                  <h3 className="font-semibold text-white mb-1">Új esemény létrehozása</h3>
+                  <h3 className="font-semibold text-[#FFF8E7] mb-1">Új esemény létrehozása</h3>
                   <p className="text-sm text-gray-400">Hozz létre új eseményt képekkel és videókkal</p>
                 </button>
                 <Link
                   href="/galeria"
-                  className="p-6 border-2 border-purple-800 rounded-xl hover:border-purple-400 hover:bg-gray-900 transition-all text-left"
+                  className="p-6 border-2 border-[#F39C12]/50 rounded-xl hover:border-[#F39C12] hover:bg-[#F39C12]/20 transition-all text-left"
                 >
-                  <div className="text-3xl mb-2">👁️</div>
-                  <h3 className="font-semibold text-white mb-1">Galéria megtekintése</h3>
+                  <div className="flex justify-center mb-2">
+                    <GalleryIcon className="w-8 h-8 text-[#F39C12]" />
+                  </div>
+                  <h3 className="font-semibold text-[#FFF8E7] mb-1">Galéria megtekintése</h3>
                   <p className="text-sm text-gray-400">Nézd meg a nyilvános galériát</p>
                 </Link>
               </div>
@@ -546,8 +618,8 @@ export default function AdminPage() {
         {activeTab === 'events' && (
           <div className="space-y-8">
             {/* Create/Edit Form */}
-            <div className="bg-black/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-800/50 p-8">
-              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <div className="bg-[#2D3436]/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#E67E22]/30 p-8">
+              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-[#E67E22] to-[#F39C12] bg-clip-text text-transparent">
                 {editingEvent ? 'Esemény szerkesztése' : 'Új esemény létrehozása'}
               </h2>
 
@@ -573,7 +645,7 @@ export default function AdminPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none"
                     required
                   />
                 </div>
@@ -587,7 +659,7 @@ export default function AdminPage() {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none"
                   />
                 </div>
 
@@ -600,7 +672,7 @@ export default function AdminPage() {
                     type="date"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none"
                   />
                 </div>
 
@@ -626,14 +698,14 @@ export default function AdminPage() {
                                   setFormData({ ...formData, organizerIds: formData.organizerIds.filter(id => id !== u.id) })
                                 }
                               }}
-                              className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
+                              className="w-4 h-4 text-[#E67E22] border-gray-300 rounded focus:ring-[#E67E22]"
                             />
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                              <div className="w-8 h-8 bg-gradient-to-r from-[#E67E22] to-[#F39C12] rounded-full flex items-center justify-center text-white font-bold text-xs">
                                 {u.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <span className="text-sm font-medium text-gray-900">{u.name}</span>
+                                <span className="text-sm font-medium text-white">{u.name}</span>
                                 <span className="text-xs text-gray-400 ml-2">{u.email}</span>
                               </div>
                             </div>
@@ -656,7 +728,7 @@ export default function AdminPage() {
                     multiple
                     accept="image/*,video/*"
                     onChange={(e) => setSelectedFiles(e.target.files)}
-                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-indigo-50 file:to-purple-50 file:text-indigo-700 hover:file:bg-gradient-to-r hover:file:from-indigo-100 hover:file:to-purple-100"
+                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-indigo-50 file:to-purple-50 file:text-indigo-700 hover:file:bg-gradient-to-r hover:file:from-indigo-100 hover:file:to-purple-100"
                     required={!editingEvent}
                   />
                   {selectedFiles && (
@@ -664,13 +736,30 @@ export default function AdminPage() {
                       {selectedFiles.length} fájl kiválasztva
                     </p>
                   )}
+
+                  {uploadProgress > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-[#F39C12]">
+                          {uploadStatus || `Feltöltés: ${uploadProgress}%`}
+                        </span>
+                        <span className="text-xs text-[#BDC3C7]">Kérjük várjon...</span>
+                      </div>
+                      <div className="w-full bg-[#1A1D1F] rounded-full h-2 overflow-hidden border border-[#E67E22]/30">
+                        <div
+                          className="bg-gradient-to-r from-[#E67E22] to-[#F39C12] h-full transition-all duration-300 ease-out"
+                          style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-4">
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                    className="flex-1 bg-gradient-to-r from-[#E67E22] to-[#F39C12] hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                   >
                     {loading ? (editingEvent ? 'Frissítés...' : 'Létrehozás...') : (editingEvent ? 'Esemény frissítése' : 'Esemény létrehozása')}
                   </button>
@@ -688,14 +777,16 @@ export default function AdminPage() {
             </div>
 
             {/* Events List */}
-            <div className="bg-black/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-800/50 p-8">
-              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <div className="bg-[#2D3436]/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#E67E22]/30 p-8">
+              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#E67E22] to-[#F39C12] bg-clip-text text-transparent">
                 Meglévő események ({events.length})
               </h2>
 
               {events.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="text-5xl mb-4">📷</div>
+                  <div className="flex justify-center mb-4">
+                    <GalleryIcon className="w-16 h-16 text-[#F39C12]" />
+                  </div>
                   <p className="text-gray-400">
                     Még nincsenek események. Hozz létre egyet!
                   </p>
@@ -710,17 +801,21 @@ export default function AdminPage() {
                           {event.description && (
                             <p className="text-gray-400 mb-2">{event.description}</p>
                           )}
-                          <p className="text-sm text-gray-400">
-                            📅 {new Date(event.date).toLocaleDateString('hu-HU')} • 🖼️ {event.images.length} kép
+                          <p className="text-sm text-gray-400 flex items-center gap-2">
+                            <CalendarIcon className="w-4 h-4" />
+                            {new Date(event.date).toLocaleDateString('hu-HU')} • 
+                            <GalleryIcon className="w-4 h-4" />
+                            {event.images.length} kép
                           </p>
                           {event.organizers && event.organizers.length > 0 && (
                             <div className="mt-2 flex items-center gap-2">
-                              <span className="text-sm text-gray-600">👥 Szervezők:</span>
+                              <UsersIcon className="w-4 h-4 text-gray-600" />
+                              <span className="text-sm text-gray-600">Szervezők:</span>
                               <div className="flex flex-wrap gap-2">
                                 {event.organizers.map((organizer) => (
                                   <span 
                                     key={organizer.user.id} 
-                                    className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-medium"
+                                    className="text-xs bg-[#E67E22]/20 text-[#E67E22] px-2 py-1 rounded-full font-medium"
                                   >
                                     {organizer.user.name}
                                   </span>
@@ -732,7 +827,7 @@ export default function AdminPage() {
                         <div className="flex gap-2 ml-4">
                           <button
                             onClick={() => handleEdit(event)}
-                            className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
+                            className="bg-gradient-to-r from-[#E67E22] to-[#F39C12] hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
                           >
                             Szerkesztés
                           </button>
@@ -760,12 +855,13 @@ export default function AdminPage() {
                                     </div>
                                   ) : (
                                     <Image
-                                      src={image.path}
+                                      src={image.thumbPath ? `${image.thumbPath}?t=${Date.now()}` : `${image.path}?t=${Date.now()}`}
                                       alt={image.filename}
                                       fill
                                       quality={100}
                                       className="object-cover"
                                       sizes="150px"
+                                      unoptimized
                                     />
                                   )}
                                 </div>
@@ -793,13 +889,13 @@ export default function AdminPage() {
         {activeTab === 'profile' && (
           <div className="space-y-8">
             {/* Profile Info */}
-            <div className="bg-black/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-800/50 p-8">
-              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <div className="bg-[#2D3436]/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#E67E22]/30 p-8">
+              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-[#E67E22] to-[#F39C12] bg-clip-text text-transparent">
                 Profil beállítások
               </h2>
 
               <div className="flex items-center space-x-6 mb-8 pb-8 border-b border-gray-700">
-                <div className="w-24 h-24 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl">
+                <div className="w-24 h-24 bg-gradient-to-r from-[#E67E22] to-[#F39C12] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl">
                   {user?.name?.charAt(0).toUpperCase() || 'A'}
                 </div>
                 <div>
@@ -841,7 +937,7 @@ export default function AdminPage() {
                     type="text"
                     value={profileData.name}
                     onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                    className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none"
                   />
                 </div>
 
@@ -871,7 +967,7 @@ export default function AdminPage() {
                         type="password"
                         value={profileData.currentPassword}
                         onChange={(e) => setProfileData({ ...profileData, currentPassword: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                        className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none"
                       />
                     </div>
 
@@ -884,7 +980,7 @@ export default function AdminPage() {
                         type="password"
                         value={profileData.newPassword}
                         onChange={(e) => setProfileData({ ...profileData, newPassword: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                        className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none"
                         minLength={8}
                       />
                     </div>
@@ -898,7 +994,7 @@ export default function AdminPage() {
                         type="password"
                         value={profileData.confirmPassword}
                         onChange={(e) => setProfileData({ ...profileData, confirmPassword: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all outline-none"
+                        className="w-full px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none"
                         minLength={8}
                       />
                     </div>
@@ -908,7 +1004,7 @@ export default function AdminPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                  className="w-full bg-gradient-to-r from-[#E67E22] to-[#F39C12] hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                 >
                   {loading ? 'Mentés...' : 'Módosítások mentése'}
                 </button>
@@ -916,8 +1012,8 @@ export default function AdminPage() {
             </div>
 
             {/* Account Info */}
-            <div className="bg-black/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-800/50 p-8">
-              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <div className="bg-[#2D3436]/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#E67E22]/30 p-8">
+              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#E67E22] to-[#F39C12] bg-clip-text text-transparent">
                 Fiók információk
               </h2>
               <div className="space-y-4 text-sm">
@@ -945,8 +1041,8 @@ export default function AdminPage() {
         {/* Organizers Tab */}
         {activeTab === 'organizers' && (
           <div className="space-y-8">
-            <div className="bg-black/90 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-800/50 p-8">
-              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <div className="bg-[#2D3436]/90 backdrop-blur-sm rounded-2xl shadow-xl border border-[#E67E22]/30 p-8">
+              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#E67E22] to-[#F39C12] bg-clip-text text-transparent">
                 Szervezők kezelése
               </h2>
               
@@ -958,13 +1054,13 @@ export default function AdminPage() {
                 {users.length === 0 ? (
                   <p className="text-center text-gray-400 py-8">Nincsenek regisztrált felhasználók</p>
                 ) : (
-                  users.filter(u => u.role !== 'organizer' && u.role !== 'admin').map((u) => (
+                  users.filter(u => u.role !== 'admin').map((u) => (
                     <div 
                       key={u.id} 
                       className="flex items-center justify-between p-4 bg-gray-900/50 rounded-xl hover:bg-gray-800 transition-colors"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        <div className="w-12 h-12 bg-gradient-to-r from-[#E67E22] to-[#F39C12] rounded-full flex items-center justify-center text-white font-bold text-lg">
                           {u.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -979,23 +1075,26 @@ export default function AdminPage() {
                       </div>
                       
                       <div className="flex items-center gap-3">
+                        {u.role === 'organizer' && (
+                          <span className="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-full font-medium">
+                            ✓ Szervező
+                          </span>
+                        )}
                         {u.id === user?.id && (
-                          <span className="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-medium">
+                          <span className="text-xs bg-[#E67E22]/20 text-[#E67E22] px-3 py-1 rounded-full font-medium">
                             Te vagy
                           </span>
                         )}
                         <button
                           onClick={() => toggleOrganizerRole(u.id, u.role || 'user')}
-                          disabled={u.id === user?.id || u.role === 'admin' || u.role === 'organizer'}
+                          disabled={u.id === user?.id || u.role === 'admin' || (user?.role !== 'admin' && user?.role !== 'organizer')}
                           className={`px-4 py-2 rounded-lg font-medium transition-all ${
                             u.role === 'organizer'
-                              ? 'bg-green-500 text-white hover:bg-green-600'
-                              : u.role === 'admin'
-                              ? 'bg-indigo-500 text-white'
-                              : 'bg-gray-300 text-gray-300 hover:bg-gray-400'
+                              ? 'bg-red-500 text-white hover:bg-red-600'
+                              : 'bg-green-500 text-white hover:bg-green-600'
                           } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
-                          {u.role === 'organizer' ? '✓ Szervező' : u.role === 'admin' ? '✓ Tulajdonos' : 'Szervező jogosultság adása'}
+                          {u.role === 'organizer' ? 'Jogosultság elvétele' : 'Szervező jogosultság adása'}
                         </button>
                       </div>
                     </div>
@@ -1009,5 +1108,7 @@ export default function AdminPage() {
     </div>
   )
 }
+
+
 
 
