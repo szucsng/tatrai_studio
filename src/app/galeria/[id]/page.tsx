@@ -8,7 +8,6 @@ import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
 import Zoom from "yet-another-react-lightbox/plugins/zoom"
 import Video from "yet-another-react-lightbox/plugins/video"
-import ColorBends from "@/components/ColorBends"
 import { UsersIcon, VideoIcon } from "@/components/Icons"
 
 interface Image {
@@ -124,7 +123,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
   if (!event || !event.images) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7C3AED]"></div>
       </div>
     )
   }
@@ -170,26 +169,10 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="min-h-screen relative">
-      {/* Animated Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <ColorBends
-          className=""
-          style={{}}
-          rotation={0}
-          speed={0.20}
-          colors={["#ff0000","#00ff00","#0000ff"]}
-          transparent={false}
-          autoRotate={0.00}
-          scale={1.00}
-          frequency={1.80}
-          warpStrength={1.00}
-          mouseInfluence={1.00}
-          parallax={0.50}
-          noise={0.10}
-        />
-      </div>
+      <div className="grain" />
+      <div className="fixed inset-0 -z-10 bg-[#0b1016]" />
       
-      <nav className="bg-[#2D3436]/80 backdrop-blur-xl shadow-sm border-b border-[#E67E22]/20 sticky top-0 z-50">
+      <nav className="bg-[#0b1016]/80 backdrop-blur-xl shadow-sm border-b border-white/10 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -206,7 +189,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
             <div className="flex items-center space-x-4">
               <Link 
                 href="/galeria" 
-                className="text-[#FFF8E7] hover:text-[#F39C12] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#E67E22]/20 border border-transparent hover:border-[#E67E22]/30 flex items-center gap-2"
+                className="text-[#f5f5f5] hover:text-[#06B6D4] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#7C3AED]/20 border border-transparent hover:border-[#7C3AED]/30 flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -219,16 +202,16 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
       </nav>
 
       <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#2D3436]/70 backdrop-blur-xl rounded-2xl shadow-xl border border-[#E67E22]/30 p-8 mb-8">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl border border-white/10 p-8 mb-8">
           <h1 className="text-4xl font-extrabold mb-2">
-            <span className="bg-gradient-to-r from-[#F39C12] via-[#FFA726] to-[#E67E22] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#06B6D4] bg-clip-text text-transparent">
               {event.name}
             </span>
           </h1>
           {event.description && (
-            <p className="text-[#BDC3C7] text-lg mb-3">{event.description}</p>
+            <p className="text-[#9CA3AF] text-lg mb-3">{event.description}</p>
           )}
-          <div className="flex items-center gap-4 text-sm text-[#BDC3C7] mb-3">
+          <div className="flex items-center gap-4 text-sm text-[#9CA3AF] mb-3">
             <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -249,13 +232,13 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
           </div>
           {event.organizers && event.organizers.length > 0 && (
             <div className="flex items-center gap-2 text-sm">
-              <UsersIcon className="w-4 h-4 text-[#BDC3C7]" />
-              <span className="text-[#BDC3C7] font-medium">Szervezők:</span>
+              <UsersIcon className="w-4 h-4 text-[#9CA3AF]" />
+              <span className="text-[#9CA3AF] font-medium">Szervezők:</span>
               <div className="flex flex-wrap gap-2">
                 {event.organizers.map((organizer) => (
                   <span 
                     key={organizer.user.id} 
-                    className="bg-[#E67E22]/20 text-[#F39C12] px-3 py-1 rounded-full text-sm font-medium"
+                    className="bg-[#7C3AED]/20 text-[#06B6D4] px-3 py-1 rounded-full text-sm font-medium"
                   >
                     {organizer.user.name}
                   </span>
@@ -279,7 +262,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                   <div className="relative w-full h-full bg-gray-900 flex items-center justify-center">
                     <div className="text-center text-white">
                       <div className="flex justify-center mb-4">
-                        <VideoIcon className="w-16 h-16 text-[#F39C12]" />
+                        <VideoIcon className="w-16 h-16 text-[#06B6D4]" />
                       </div>
                       <div className="text-lg font-semibold mb-2">Videó</div>
                       <div className="text-sm opacity-75">Kattints a lejátszáshoz vagy letöltéshez</div>
@@ -299,7 +282,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 {isVideoFile(image.filename) && (
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 rounded-full p-4 pointer-events-none">
-                    <svg className="w-8 h-8 text-[#E67E22]" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 text-[#7C3AED]" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                   </div>
@@ -333,7 +316,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                     e.stopPropagation()
                     handleDownload(image.path, image.filename)
                   }}
-                  className="bg-gradient-to-r from-[#E67E22] to-[#F39C12] hover:from-[#F39C12] hover:to-[#FFA726] text-white p-3 rounded-xl shadow-lg hover:scale-110 transition-all"
+                  className="bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] hover:from-[#8B5CF6] hover:to-[#14C8E0] text-white p-3 rounded-xl shadow-lg hover:scale-110 transition-all"
                   title="Fájl letöltése eredeti minőségben"
                 >
                   <svg

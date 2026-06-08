@@ -4,7 +4,6 @@ import { signIn } from '@/lib/auth-client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import ColorBends from '@/components/ColorBends'
 import { LockIcon } from '@/components/Icons'
 
 export default function LoginPage() {
@@ -74,37 +73,20 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative">
-      {/* Animated Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <ColorBends
-          className=""
-          style={{}}
-          rotation={0}
-          speed={0.20}
-          colors={["#ff0000","#00ff00","#0000ff"]}
-          transparent={false}
-          autoRotate={0.00}
-          scale={1.00}
-          frequency={1.80}
-          warpStrength={1.00}
-          mouseInfluence={1.00}
-          parallax={0.50}
-          noise={0.10}
-        />
-      </div>
+      <div className="grain" />
+      <div className="fixed inset-0 -z-10 bg-[#0b1016]" />
       
       <div className="max-w-md w-full">
-        <div className="bg-[#2D3436]/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#E67E22]/30 p-8 relative overflow-hidden">
-          {/* Decorative gradient */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#F39C12]/30 to-[#E67E22]/20 rounded-full blur-3xl -z-10"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#FFE5B4]/40 to-[#F39C12]/30 rounded-full blur-3xl -z-10"></div>
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#7C3AED]/20 to-[#06B6D4]/10 rounded-full blur-3xl -z-10"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#7C3AED]/10 to-[#06B6D4]/20 rounded-full blur-3xl -z-10"></div>
           
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <LockIcon className="w-16 h-16 text-[#F39C12]" />
+              <LockIcon className="w-16 h-16 text-[#06B6D4]" />
             </div>
             <h2 className="text-3xl font-extrabold">
-              <span className="bg-gradient-to-r from-[#F39C12] via-[#FFA726] to-[#E67E22] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#06B6D4] bg-clip-text text-transparent">
                 Admin Bejelentkezés
               </span>
             </h2>
@@ -130,13 +112,13 @@ export default function LoginPage() {
             )}
 
             {resendMessage && (
-              <div className="bg-[#F39C12]/10 border border-[#F39C12]/30 text-[#F39C12] px-4 py-3 rounded-xl text-sm backdrop-blur-sm">
+              <div className="bg-[#06B6D4]/10 border border-[#06B6D4]/30 text-[#06B6D4] px-4 py-3 rounded-xl text-sm backdrop-blur-sm">
                 {resendMessage}
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#BDC3C7] mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-[#9CA3AF] mb-2">
                 Email
               </label>
               <input
@@ -144,19 +126,19 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-[#1A1D1F]/50 border border-[#E67E22]/30 text-[#FFF8E7] rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none placeholder-[#636E72]"
+                className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none placeholder-[#6B7280]"
                 required
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium text-[#BDC3C7]">
+                <label htmlFor="password" className="block text-sm font-medium text-[#9CA3AF]">
                   Jelszó
                 </label>
                 <Link
                   href="/admin/forgot-password"
-                  className="text-sm text-[#F39C12] hover:text-[#E67E22] font-semibold hover:underline transition-colors"
+                  className="text-sm text-[#06B6D4] hover:text-[#7C3AED] font-semibold hover:underline transition-colors"
                 >
                   Elfelejtett jelszó?
                 </Link>
@@ -166,7 +148,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-[#1A1D1F]/50 border border-[#E67E22]/30 text-[#FFF8E7] rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none placeholder-[#636E72]"
+                className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none placeholder-[#6B7280]"
                 required
               />
             </div>
@@ -174,7 +156,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#F39C12] to-[#E67E22] hover:from-[#FFA726] hover:to-[#F39C12] text-[#2D3436] font-bold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 border border-[#E67E22]/50"
+              className="w-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] hover:from-[#8B5CF6] hover:to-[#14C8E0] text-[#0b0f18] font-bold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
@@ -190,13 +172,13 @@ export default function LoginPage() {
             </button>
 
             <div className="relative">
-              <div className="w-full border-t border-[#E67E22]/20"></div>
+              <div className="w-full border-t border-white/10"></div>
             </div>
 
             <div className="text-center">
               <Link
                 href="/"
-                className="text-sm text-[#BDC3C7] hover:text-[#F39C12] font-medium hover:underline transition-colors"
+                className="text-sm text-[#9CA3AF] hover:text-[#06B6D4] font-medium hover:underline transition-colors"
               >
                 ← Vissza a főoldalra
               </Link>

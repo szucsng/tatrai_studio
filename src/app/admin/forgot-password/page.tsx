@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import ColorBends from '@/components/ColorBends'
 import { KeyIcon } from '@/components/Icons'
 
 export default function ForgotPasswordPage() {
@@ -41,47 +40,31 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative">
-      {/* Animated Background */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <ColorBends
-          className=""
-          style={{}}
-          rotation={0}
-          speed={0.20}
-          colors={["#ff0000","#00ff00","#0000ff"]}
-          transparent={false}
-          autoRotate={0.00}
-          scale={1.00}
-          frequency={1.80}
-          warpStrength={1.00}
-          mouseInfluence={1.00}
-          parallax={0.50}
-          noise={0.10}
-        />
-      </div>
+      <div className="grain" />
+      <div className="fixed inset-0 -z-10 bg-[#0b1016]" />
       
       <div className="max-w-md w-full">
-        <div className="bg-[#2D3436]/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#E67E22]/30 p-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#F39C12]/30 to-[#E67E22]/20 rounded-full blur-3xl -z-10"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#FFE5B4]/40 to-[#F39C12]/30 rounded-full blur-3xl -z-10"></div>
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#7C3AED]/20 to-[#06B6D4]/10 rounded-full blur-3xl -z-10"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-gradient-to-tr from-[#7C3AED]/10 to-[#06B6D4]/20 rounded-full blur-3xl -z-10"></div>
           
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <KeyIcon className="w-16 h-16 text-[#F39C12]" />
+              <KeyIcon className="w-16 h-16 text-[#06B6D4]" />
             </div>
             <h2 className="text-3xl font-extrabold">
-              <span className="bg-gradient-to-r from-[#F39C12] via-[#FFA726] to-[#E67E22] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#06B6D4] bg-clip-text text-transparent">
                 Elfelejtett jelszó
               </span>
             </h2>
-            <p className="text-[#BDC3C7] mt-2">
+            <p className="text-[#9CA3AF] mt-2">
               Add meg az email címed és küldünk egy jelszó visszaállítási linket
             </p>
           </div>
 
           {message && (
-            <div className="mb-6 p-4 bg-[#F39C12]/10 border border-[#F39C12]/30 rounded-xl backdrop-blur-sm">
-              <p className="text-[#F39C12] text-sm">{message}</p>
+            <div className="mb-6 p-4 bg-[#06B6D4]/10 border border-[#06B6D4]/30 rounded-xl backdrop-blur-sm">
+              <p className="text-[#06B6D4] text-sm">{message}</p>
             </div>
           )}
 
@@ -93,7 +76,7 @@ export default function ForgotPasswordPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-semibold text-[#BDC3C7] mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-[#9CA3AF] mb-2">
                 Email cím
               </label>
               <input
@@ -101,7 +84,7 @@ export default function ForgotPasswordPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-[#1A1D1F]/50 border border-[#E67E22]/30 text-[#FFF8E7] rounded-xl focus:ring-2 focus:ring-[#E67E22] focus:border-[#E67E22] transition-all outline-none placeholder-[#636E72]"
+                className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none placeholder-[#6B7280]"
                 placeholder="pelda@email.com"
                 required
               />
@@ -110,7 +93,7 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-[#F39C12] to-[#E67E22] hover:from-[#FFA726] hover:to-[#F39C12] text-[#2D3436] font-bold rounded-xl hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-[#E67E22]/50"
+              className="w-full py-3 px-4 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] hover:from-[#8B5CF6] hover:to-[#14C8E0] text-[#0b0f18] font-bold rounded-xl hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center">
@@ -128,7 +111,7 @@ export default function ForgotPasswordPage() {
             <div className="text-center">
               <Link
                 href="/admin/login"
-                className="text-sm text-[#BDC3C7] hover:text-[#F39C12] font-semibold hover:underline transition-colors"
+                className="text-sm text-[#9CA3AF] hover:text-[#06B6D4] font-semibold hover:underline transition-colors"
               >
                 ← Vissza a bejelentkezéshez
               </Link>
