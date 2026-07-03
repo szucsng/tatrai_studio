@@ -97,13 +97,6 @@ export default function Home(): React.ReactElement {
             <span className="brand-pill has-logo" aria-label="Csengely"><img src="/l_csengelykertip.png" alt="" /></span>
             <span className="brand-pill has-logo" aria-label="Mikorhol"><img src="/l_mikorhol_fekete.jpg" alt="" /></span>
             <span className="brand-pill has-logo" aria-label="Kandologo"><img src="/l_kandologo.png" alt="" /></span>
-
-            {/* duplicate for continuous marquee */}
-            <span className="brand-pill has-logo"><img src="/l_alevesburger.jpg" alt="" /></span>
-            <span className="brand-pill has-logo"><img src="/l_bft.png" alt="" /></span>
-            <span className="brand-pill has-logo"><img src="/l_csengelykertip.png" alt="" /></span>
-            <span className="brand-pill has-logo"><img src="/l_mikorhol_feher.jpg" alt="" /></span>
-            <span className="brand-pill has-logo"><img src="/l_kandologo.png" alt="" /></span>
           </div>
         </div>
       </section>
