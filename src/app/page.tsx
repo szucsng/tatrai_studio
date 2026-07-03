@@ -31,7 +31,7 @@ export default function Home(): React.ReactElement {
 
       <section className="hero">
         <video className="hero-video" muted loop autoPlay playsInline>
-          <source src="/header_video.qt" type="video/quicktime" />
+          <source src="/header_video.mp4" type="video/mp4" />
         </video>
         <div className="hero-overlay" />
         <div className="hero-content">
@@ -194,7 +194,7 @@ export default function Home(): React.ReactElement {
           <div className="mp-grid">
             <a className="mp-card mp-card--video" href="#mini-portfolio" aria-label="Kisfilm / videó megtekintése">
               <video className="hero-video" muted loop autoPlay playsInline>
-                <source src="/header_video.qt" type="video/quicktime" />
+                <source src="/header_video.mp4" type="video/mp4" />
               </video>
               <div className="mp-overlay" aria-hidden>
                 <div className="mp-play" aria-hidden />
