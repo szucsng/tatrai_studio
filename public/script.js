@@ -366,9 +366,7 @@
     // wait for images to load, then start
     const start = () => {
       fill();
-      if (section) {
-        pos = section.offsetWidth;
-      }
+      pos = 0;
       tick();
     };
 
