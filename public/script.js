@@ -406,15 +406,23 @@
   }
 
   // ----------------------------
-  // Init — script is at bottom of <body>, DOM is ready
+  // Init — run when DOM is ready (or immediately if already ready)
   // ----------------------------
-  initWorkFilters();
-  initBeforeAfter();
-  initMobileMenu();
-  initAnimateOnScroll();
-  initHoverVideos();
-  initHeroIntro();
-  initStatsCountUp();
-  initProofTabs();
-  initBrandMarquee();
+  const run = () => {
+    initWorkFilters();
+    initBeforeAfter();
+    initMobileMenu();
+    initAnimateOnScroll();
+    initHoverVideos();
+    initHeroIntro();
+    initStatsCountUp();
+    initProofTabs();
+    initBrandMarquee();
+  };
+
+  if (document.readyState !== 'loading') {
+    run();
+  } else {
+    document.addEventListener('DOMContentLoaded', run);
+  }
 })();

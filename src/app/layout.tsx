@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
         {children}
-        <Script src="/script.js" strategy="afterInteractive" />
+        <Script src="/script.js" strategy="lazyOnload" />
       </body>
     </html>
   );
