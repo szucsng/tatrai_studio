@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import { config } from 'dotenv'
+import { resolve } from 'path'
 
-config({ path: '.env' })
+config({ path: resolve(process.cwd(), '.env') })
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -11,6 +12,11 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma = globalForPrisma.prisma ?? (() => {
   try {
     const client = new PrismaClient({
+      datasources: {
+        db: {
+          url: process.env.DATABASE_URL,
+        },
+      },
       log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
     })
 
