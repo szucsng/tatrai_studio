@@ -1,7 +1,5 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
-import Image from "next/image"
-
 export const dynamic = 'force-dynamic'
 
 interface ImageType {
@@ -107,14 +105,12 @@ export default async function GaleriaPage() {
 
       <main>
         <section className="relative w-full min-h-[85vh] flex items-center overflow-hidden">
-          <div className="absolute inset-0">
-            <Image
+          <div className="absolute inset-0" style={{ background: '#0b1016' }}>
+            <img
               src="/indexkep2.jpg"
               alt=""
-              fill
               className="object-cover"
-              priority
-              unoptimized
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
             />
             <div className="absolute inset-0" style={{
               background: 'linear-gradient(180deg, rgba(11,16,22,0.10) 0%, rgba(11,16,22,0.35) 25%, rgba(11,16,22,0.70) 55%, #0b1016 100%)'
@@ -289,13 +285,11 @@ export default async function GaleriaPage() {
                 </div>
                 <div className="flex flex-col lg:flex-row min-h-[220px]">
                   <div className="relative flex-shrink-0 w-full lg:w-[460px] min-h-[260px] overflow-hidden" style={{ borderRadius: '22px 22px 0 0' }}>
-                    <Image
+                    <img
                       src={featured.images[0]?.thumbPath || featured.images[0]?.path || '/indexkep2.jpg'}
                       alt=""
-                      fill
                       className="object-cover transition-all duration-700 group-hover:scale-110"
-                      sizes="460px"
-                      unoptimized
+                      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                     <div className="absolute inset-0" style={{ background: 'linear-gradient(90deg, rgba(11,16,22,0.40) 0%, transparent 60%)' }} />
 
@@ -394,14 +388,12 @@ export default async function GaleriaPage() {
                       <div className="flex flex-col">
                         <div className="relative w-full h-[220px] overflow-hidden">
                           {previews[0] ? (
-                            <Image
+                            <img
                               src={previews[0].thumbPath || previews[0].path}
                               alt=""
-                              fill
                               className="object-cover transition-all duration-700 group-hover:scale-110"
-                              sizes="(max-width: 1024px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                               loading="lazy"
-                              unoptimized
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
@@ -420,13 +412,12 @@ export default async function GaleriaPage() {
                           <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2">
                             {previews.length > 1 && (
                               <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 border" style={{ borderColor: 'rgba(255,255,255,0.10)' }}>
-                                <Image
+                                <img
                                   src={previews[1].thumbPath || previews[1].path}
                                   alt=""
                                   width={40}
                                   height={40}
                                   className="object-cover w-full h-full"
-                                  unoptimized
                                 />
                               </div>
                             )}

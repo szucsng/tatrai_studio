@@ -2,7 +2,6 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import Lightbox from "yet-another-react-lightbox"
 import "yet-another-react-lightbox/styles.css"
@@ -176,8 +175,8 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link href="/">
-                <Image 
+                <Link href="/">
+                <img 
                   src="/logo.png" 
                   alt="Logo" 
                   width={40} 
@@ -269,14 +268,12 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                     </div>
                   </div>
                 ) : (
-                  <Image
+                  <img
                     src={image.thumbPath || image.path}
                     alt={image.filename}
-                    fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                     loading="lazy"
-                    unoptimized
                   />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
