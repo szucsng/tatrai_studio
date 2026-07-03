@@ -313,16 +313,110 @@
 
 
   // ----------------------------
-  // Init everything on DOM ready
+  // 8) Brand marquee – continuous scroll
   // ----------------------------
-  document.addEventListener("DOMContentLoaded", () => {
-    initWorkFilters();
-    initBeforeAfter();
-    initMobileMenu();
-    initAnimateOnScroll();
-    initHoverVideos();
-    initHeroIntro();
-    initStatsCountUp();
-    initProofTabs();
-  });
+  function initBrandMarquee() {
+    const track = document.querySelector('.marquee-track');
+    if (!track) return;
+
+    const section = track.closest('.brand-marquee');
+    const originalItems = Array.from(track.children);
+    if (originalItems.length === 0) return;
+
+    // start from the right edge of the viewport
+    let pos = section ? section.offsetWidth : window.innerWidth;
+    let paused = false;
+    let rafId = null;
+
+    // clone items enough times to fill the screen + extra
+    const fill = () => {
+      // remove old clones (keep originals)
+      while (track.children.length > originalItems.length) {
+        track.removeChild(track.lastChild);
+      }
+      const totalWidth = track.scrollWidth;
+      const viewW = section ? section.offsetWidth : window.innerWidth;
+      const needed = Math.ceil(viewW / (totalWidth || 1)) + 2;
+      for (let i = 1; i < needed; i++) {
+        originalItems.forEach((item) => {
+          const clone = item.cloneNode(true);
+          clone.removeAttribute('aria-label');
+          track.appendChild(clone);
+        });
+      }
+    };
+
+    const tick = () => {
+      if (!paused) {
+        pos -= 1;
+        const firstItem = track.firstElementChild;
+        if (firstItem) {
+          const itemW = firstItem.offsetWidth;
+          // if first item is completely off-screen left, move it to the end
+          if (pos < -itemW - 28) {
+            pos += itemW + 28;
+            track.appendChild(firstItem);
+          }
+        }
+        track.style.transform = 'translateX(' + pos + 'px)';
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+
+    // wait for images to load, then start
+    const start = () => {
+      fill();
+      if (section) {
+        pos = section.offsetWidth;
+      }
+      tick();
+    };
+
+    // start after images are ready
+    const imgs = track.querySelectorAll('img');
+    let loaded = 0;
+    if (imgs.length === 0) { start(); return; }
+    imgs.forEach((img) => {
+      if (img.complete) {
+        loaded++;
+        if (loaded === imgs.length) start();
+      } else {
+        img.addEventListener('load', () => {
+          loaded++;
+          if (loaded === imgs.length) start();
+        });
+        img.addEventListener('error', () => {
+          loaded++;
+          if (loaded === imgs.length) start();
+        });
+      }
+    });
+
+    if (section) {
+      section.addEventListener('mouseenter', () => { paused = true; });
+      section.addEventListener('mouseleave', () => { paused = false; });
+    }
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        fill();
+        pos = section ? section.offsetWidth : window.innerWidth;
+      }, 200);
+    });
+  }
+
+  // ----------------------------
+  // Init — script is at bottom of <body>, DOM is ready
+  // ----------------------------
+  initWorkFilters();
+  initBeforeAfter();
+  initMobileMenu();
+  initAnimateOnScroll();
+  initHoverVideos();
+  initHeroIntro();
+  initStatsCountUp();
+  initProofTabs();
+  initBrandMarquee();
 })();

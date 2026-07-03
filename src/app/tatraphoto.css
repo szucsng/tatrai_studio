@@ -418,17 +418,7 @@ nav ul li:hover::after {
   align-items: center;
   gap: 28px;
   width: max-content;
-  animation: marqueeScroll 22s linear infinite;
   will-change: transform;
-}
-
-.brand-marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
-
-@keyframes marqueeScroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
 }
 
 .brand-pill {
@@ -1335,15 +1325,6 @@ body.nav-open .nav-backdrop {
 @media (prefers-reduced-motion: reduce) {
   .grain {
     animation: none;
-  }
-
-  .marquee-track {
-    animation: none;
-    transform: none;
-  }
-
-  .brand-marquee:hover .marquee-track {
-    animation-play-state: running;
   }
 
   .scroll-scribble__arrow path {
