@@ -419,15 +419,10 @@ nav ul li:hover::after {
   gap: 28px;
   width: max-content;
   animation: marqueeScroll 22s linear infinite;
-  animation-play-state: paused;
   will-change: transform;
 }
 
-.marquee-track.is-running {
-  animation-play-state: running;
-}
-
-.brand-marquee:hover .marquee-track.is-running {
+.brand-marquee:hover .marquee-track {
   animation-play-state: paused;
 }
 
@@ -1347,7 +1342,7 @@ body.nav-open .nav-backdrop {
     transform: none;
   }
 
-  .brand-marquee:hover .marquee-track.is-running {
+  .brand-marquee:hover .marquee-track {
     animation-play-state: running;
   }
 

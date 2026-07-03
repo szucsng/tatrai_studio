@@ -313,26 +313,6 @@
 
 
   // ----------------------------
-  // 8) Brand marquee – clone items for seamless loop
-  // ----------------------------
-  function initBrandMarquee() {
-    const track = document.querySelector('.marquee-track');
-    if (!track) return;
-
-    const items = Array.from(track.children);
-    if (items.length === 0) return;
-
-    // clone all items to create a seamless infinite loop
-    items.forEach((item) => {
-      const clone = item.cloneNode(true);
-      clone.removeAttribute('aria-label');
-      track.appendChild(clone);
-    });
-
-    track.classList.add('is-running');
-  }
-
-  // ----------------------------
   // Init everything on DOM ready
   // ----------------------------
   document.addEventListener("DOMContentLoaded", () => {
@@ -344,6 +324,5 @@
     initHeroIntro();
     initStatsCountUp();
     initProofTabs();
-    initBrandMarquee();
   });
 })();
