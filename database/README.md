@@ -55,13 +55,13 @@ A `npm run build` a `prebuild` lépésben automatikusan lefuttatja a `prisma gen
 
 ## Automatikus inicializálás induláskor
 
-A Pterodactyl startup commandba tedd bele a `db:init`-et a build elé:
+A `npm start` automatikusan lefuttatja a `db:init`-et, mielőtt elindítja a Next szervert. Így a Pterodactyl startup commandban nem kell külön szerepeltetni:
 
 ```bash
-bash -c "git pull --ff-only origin main && npm install --include=dev && npm run db:init && npm run build && exec npm start"
+bash -c "git pull --ff-only origin main && npm install --include=dev && npm run build && exec npm start"
 ```
 
-Így üres adatbázisnál automatikusan létrejönnek a táblák, meglévő adatbázisnál pedig csak a szükséges migrációk futnak le.
+Ha a build előtt is inicializálni szeretnéd, a `db:init` oda is beírható, de a `start` miatt ez nem kötelező.
 
 ## Séma módosítása
 
