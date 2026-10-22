@@ -169,11 +169,11 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
     }) ?? []
 
   return (
-    <div className="min-h-screen bg-[#0b1016] text-[#f5f5f5]">
+    <div className="flex min-h-screen flex-col bg-[#0b1016] text-[#f5f5f5]">
       <div className="grain" />
       <GalleryHeader />
 
-      <main className="pt-28">
+      <main className="flex-1 pt-28">
         {!event && !error && (
           <div className="container py-16" role="status" aria-live="polite">
             <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">
