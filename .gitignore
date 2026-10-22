@@ -4,3 +4,6 @@
 .env.local
 .env.*.local
 .DS_Store
+
+# Legacy adatbázis dumpok (helyi archiválás)
+database/legacy/

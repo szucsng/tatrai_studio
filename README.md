@@ -63,23 +63,25 @@ ADMIN_SETUP_SECRET="admin-setup-secret"
 
 ### 3. Adatbázis előkészítése
 
+A teljes sémát a Prisma kezeli. Üres adatbázison:
+
 ```bash
-npx prisma migrate deploy
-npx prisma generate
+npm run db:migrate
+npm run db:generate
 ```
+
+Ha inkább egy SQL fájlt importálnál, használd a `database/schema.sql`-t. Részletek: [`database/README.md`](database/README.md).
 
 ### 4. Admin felhasználó létrehozása
 
-```bash
-npm run create-admin
-```
+Nyisd meg a [http://localhost:5102/setup](http://localhost:5102/setup) oldalt, és add meg az emailt, jelszót, nevet, valamint a `.env` fájlban lévő `ADMIN_SETUP_SECRET` értékét. Az oldal admin szerepkörrel hozza létre az első felhasználót.
 
 Vagy az API-n keresztül (szerver futása közben):
 
 ```bash
 curl -X POST http://localhost:5102/api/setup/create-admin \
   -H "Content-Type: application/json" \
-  -d "{\"name\":\"Admin\",\"email\":\"admin@example.com\",\"password\":\"admin123\",\"secret\":\"admin-setup-secret\"}"
+  -d "{\"name\":\"Admin\",\"email\":\"admin@example.com\",\"password\":\"valtoztasd-meg\",\"secret\":\"<ADMIN_SETUP_SECRET>\"}"
 ```
 
 ### 5. Alkalmazás indítása
@@ -152,8 +154,11 @@ tatrai_studio/
 │   └── types/
 │       └── next-auth.d.ts           # Típusdefiníciók
 ├── prisma/
-│   ├── schema.prisma                # Adatbázis séma
+│   ├── schema.prisma                # Az adatbázis-séma egyetlen forrása
 │   └── migrations/                  # Prisma migrációk
+├── database/
+│   ├── schema.sql                   # Egyben importálható MySQL séma
+│   └── README.md                    # Adatbázis útmutató
 ├── public/
 │   ├── team/                        # Csapattagok képei
 │   └── uploads/                     # Feltöltött képek (esemény ID szerint)
@@ -163,6 +168,8 @@ tatrai_studio/
 ```
 
 ## Adatbázis séma
+
+A séma forrása a `prisma/schema.prisma`, az egyben importálható változat a `database/schema.sql`.
 
 ### User
 - `id`, `email` (unique), `name`, `role` (admin/user)
@@ -189,7 +196,14 @@ tatrai_studio/
 
 ```bash
 npx prisma migrate dev --name leiras
-npx prisma generate
+npm run db:generate
+```
+
+Éles környezetben:
+
+```bash
+npm run db:migrate
+npm run db:generate
 ```
 
 ### Build éles környezethez

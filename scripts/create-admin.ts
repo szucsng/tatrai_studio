@@ -1,45 +1,37 @@
 import 'dotenv/config'
-import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+const [email, name = 'Admin', password] = process.argv.slice(2)
+const baseUrl = process.env.BETTER_AUTH_URL || 'http://localhost:5102'
+const secret = process.env.ADMIN_SETUP_SECRET
 
-async function main() {
-  const email = process.argv[2] || 'admin@example.com'
-  const name = process.argv[3] || 'Admin'
-
-  // Ellenőrizzük, hogy létezik-e már admin felhasználó
-  const existingUser = await prisma.user.findUnique({
-    where: { email }
-  })
-
-  if (existingUser) {
-    console.log(`A(z) "${email}" felhasználó már létezik!`)
-    return
-  }
-
-  // Admin felhasználó létrehozása (better-auth használ külön account táblát a jelszóhoz)
-  const user = await prisma.user.create({
-    data: {
-      email,
-      name,
-      emailVerified: new Date(),
-      role: 'admin'
-    }
-  })
-
-  console.log(`Admin felhasználó sikeresen létrehozva!`)
-  console.log(`Email: ${user.email}`)
-  console.log(`Név: ${user.name}`)
-  console.log(`\nFontos: A jelszót a better-auth setup API-val kell beállítani!`)
-  console.log(`POST /api/setup/create-admin`)
+if (!email || !password) {
+  console.error('Használat: npm run create-admin -- email@example.com "Név" "jelszó"')
+  process.exit(1)
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect()
+if (!secret) {
+  console.error('Az ADMIN_SETUP_SECRET nincs beállítva a .env fájlban.')
+  process.exit(1)
+}
+
+async function main() {
+  const response = await fetch(`${baseUrl}/api/setup/create-admin`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, name, password, secret }),
   })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
+
+  const data = await response.json()
+
+  if (!response.ok) {
+    console.error('Hiba az admin létrehozása során:', data)
     process.exit(1)
-  })
+  }
+
+  console.log('Admin felhasználó létrehozva:', email)
+}
+
+main().catch((error) => {
+  console.error('Hiba:', error instanceof Error ? error.message : error)
+  process.exit(1)
+})

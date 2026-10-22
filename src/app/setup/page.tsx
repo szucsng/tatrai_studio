@@ -5,10 +5,10 @@ import { useState } from 'react'
 import { SettingsIcon } from '@/components/Icons'
 
 export default function SetupPage() {
-  const [email, setEmail] = useState('admin@example.com')
-  const [password, setPassword] = useState('admin123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [name, setName] = useState('Admin')
-  const [secret, setSecret] = useState('create-admin-secret-2024')
+  const [secret, setSecret] = useState('')
   const [result, setResult] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
@@ -46,16 +46,16 @@ export default function SetupPage() {
       <div className="fixed inset-0 -z-10 bg-[#0b1016]" />
       <div className="relative z-10 max-w-4xl mx-auto p-8">
         <nav className="flex items-center gap-6 mb-8 text-sm">
-          <Link href="/" className="text-[#9CA3AF] hover:text-[#06B6D4] transition-colors">
+          <Link href="/" className="text-[#9CA3AF] hover:text-[#E0A458] transition-colors">
             ← Vissza a főoldalra
           </Link>
-          <Link href="/admin/login" className="text-[#9CA3AF] hover:text-[#06B6D4] transition-colors">
+          <Link href="/admin/login" className="text-[#9CA3AF] hover:text-[#E0A458] transition-colors">
             Admin bejelentkezés →
           </Link>
         </nav>
 
         <h1 className="text-3xl font-bold mb-8 flex items-center gap-3 text-[#f5f5f5]">
-          <SettingsIcon className="w-8 h-8 text-[#06B6D4]" />
+          <SettingsIcon className="w-8 h-8 text-[#E0A458]" />
           Admin Felhasználó Létrehozása
         </h1>
         
@@ -69,7 +69,7 @@ export default function SetupPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] outline-none"
                   required
                 />
               </div>
@@ -80,7 +80,7 @@ export default function SetupPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] outline-none"
                   required
                 />
               </div>
@@ -91,7 +91,7 @@ export default function SetupPage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] outline-none"
                   required
                 />
               </div>
@@ -102,7 +102,7 @@ export default function SetupPage() {
                   type="password"
                   value={secret}
                   onChange={(e) => setSecret(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] outline-none"
+                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] outline-none"
                   required
                 />
               </div>
@@ -110,7 +110,7 @@ export default function SetupPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] hover:from-[#8B5CF6] hover:to-[#14C8E0] text-[#0b0f18] font-bold py-2 px-4 rounded-xl transition-all disabled:opacity-50"
+                className="w-full bg-gradient-to-r from-[#E0A458] to-[#C77B3F] hover:from-[#EDB56B] hover:to-[#D48A4A] text-[#0b0f18] font-bold py-2 px-4 rounded-xl transition-all disabled:opacity-50"
               >
                 {loading ? 'Létrehozás...' : 'Admin Létrehozása'}
               </button>

@@ -1,18 +1,25 @@
 # 🚀 Gyors Telepítési Útmutató
 
-## 1. Adatbázis Frissítése
+## 1. Adatbázis előkészítése
 
-Az SQL script futtatása MySQL-ben:
+A táblákat a Prisma hozza létre az egységes sémából:
 
 ```bash
-mysql -u u20_eqIJNUeShB -p s20_kepweb < add-email-features.sql
+npm run db:migrate
+npm run db:generate
 ```
 
-Vagy másold be az SQL parancsokat manuálisan a phpMyAdmin-ban vagy mysql console-ban.
+Üres adatbázison migráció nélkül is szinkronizálhatod:
+
+```bash
+npm run db:push
+```
+
+Részletek: [`database/README.md`](database/README.md).
 
 ## 2. SMTP Konfiguráció
 
-Hozd létre a `.env.local` fájlt a projekt root-ban:
+Hozd létre a `.env` fájlt a projekt root-ban:
 
 ```env
 # SMTP Email Configuration
@@ -46,7 +53,7 @@ npm run dev
 
 ## 5. Tesztelés
 
-1. Nyisd meg: http://localhost:3000/admin/login
+1. Nyisd meg: http://localhost:5102/admin/login
 2. Kattints: "Elfelejtett jelszó?"
 3. Add meg az email címed
 4. Ellenőrizd az emailt
@@ -68,15 +75,12 @@ npm run dev
 
 ### Adatbázis hiba
 
-**Probléma**: User tábla nem tartalmazza az új mezőket
+**Probléma**: hiányzó táblák vagy oszlopok
 
 **Megoldás**:
 ```bash
-# Futtasd az SQL script-et
-mysql -u username -p database_name < add-email-features.sql
-
-# Majd generáld újra a Prisma client-et
-npx prisma generate
+npm run db:migrate
+npm run db:generate
 ```
 
 ### Token lejárt

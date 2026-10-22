@@ -78,10 +78,12 @@ SMTP_FROM="your-email@gmail.com"
 ### 4. NextAuth/Better Auth beállítások
 
 ```env
-NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_URL="http://localhost:5102"
 NEXTAUTH_SECRET="hosszu-random-secret-kulcs"
 BETTER_AUTH_SECRET="masik-hosszu-random-secret"
-BETTER_AUTH_URL="http://localhost:3000"
+BETTER_AUTH_URL="http://localhost:5102"
+NEXT_PUBLIC_APP_URL="http://localhost:5102"
+ADMIN_SETUP_SECRET="valami-eros-titok"
 ```
 
 Secret kulcsok generálása:
@@ -90,10 +92,11 @@ Secret kulcsok generálása:
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-### 5. Prisma Client újragenerálása
+### 5. Adatbázis és Prisma Client
 
 ```bash
-npx prisma generate
+npm run db:migrate
+npm run db:generate
 ```
 
 ### 6. Alkalmazás indítása
@@ -162,13 +165,7 @@ model User {
 
 ### Admin létrehozása
 
-Ha még nincs admin felhasználód:
-
-```bash
-npm run create-admin
-```
-
-Vagy használd a setup oldalt: `http://localhost:3000/setup`
+Ha még nincs admin felhasználód, nyisd meg a `http://localhost:5102/setup` oldalt, és add meg az emailt, jelszót, nevet, valamint a `.env` fájlban lévő `ADMIN_SETUP_SECRET` értékét.
 
 ### Email sablonok
 

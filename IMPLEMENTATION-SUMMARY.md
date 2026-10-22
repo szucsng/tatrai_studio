@@ -147,16 +147,21 @@ model User {
 ## 🚀 Következő Lépések
 
 ### Adatbázis frissítés
-Futtasd a `add-email-features.sql` script-et az adatbázison:
+
+A séma egységes forrása a `prisma/schema.prisma`. Futtasd a migrációkat:
 
 ```bash
-mysql -u username -p database_name < add-email-features.sql
+npm run db:migrate
+npm run db:generate
 ```
 
-Vagy használd a Prisma push-t (ha működik):
+Üres adatbázison migráció nélkül is szinkronizálhatsz:
+
 ```bash
-npx prisma db push
+npm run db:push
 ```
+
+A kézi SQL scriptek helyét a `database/schema.sql` vette át.
 
 ### SMTP Beállítás
 
@@ -166,12 +171,7 @@ npx prisma db push
 
 ### Teszt Felhasználó
 
-Hozz létre egy admin felhasználót:
-```bash
-npm run create-admin
-```
-
-Vagy használd a setup oldalt: `http://localhost:3000/setup`
+Hozz létre egy admin felhasználót a setup oldalon: `http://localhost:5102/setup`. Add meg az emailt, jelszót, nevet, valamint a `.env` fájlban lévő `ADMIN_SETUP_SECRET` értékét.
 
 ## 📝 Fájlok
 
@@ -185,7 +185,8 @@ Vagy használd a setup oldalt: `http://localhost:3000/setup`
 - `src/app/admin/forgot-password/page.tsx`
 - `src/app/admin/reset-password/page.tsx`
 - `src/app/admin/verify-email/page.tsx`
-- `add-email-features.sql`
+- `database/schema.sql` – egységes MySQL séma
+- `database/README.md` – adatbázis útmutató
 - `ADMIN-PANEL-README.md`
 - `.env.example`
 

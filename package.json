@@ -6,9 +6,14 @@
     "dev": "next dev -p 5102",
     "build": "next build",
     "start": "next start -p 5102",
-    "deploy": "git pull --ff-only origin main && npm install && npm run build && pm2 startOrRestart ecosystem.config.js --update-env",
+    "deploy": "git pull --ff-only origin main && npm install && npm run db:migrate && npm run db:generate && npm run build && pm2 startOrRestart ecosystem.config.js --update-env",
     "lint": "eslint",
-    "create-admin": "tsx scripts/create-admin.ts"
+    "create-admin": "tsx scripts/create-admin.ts",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "db:studio": "prisma studio",
+    "db:test": "node scripts/test-db.js"
   },
   "dependencies": {
     "@better-auth/prisma-adapter": "^1.5.3",
