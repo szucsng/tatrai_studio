@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
       where: { id: user.id },
       data: {
         verificationToken,
-      } as any,
+      },
     })
 
     // Küldjük el az emailt

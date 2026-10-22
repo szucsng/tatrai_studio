@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     const user = await prisma.user.findFirst({
       where: {
         verificationToken: token,
-      } as any,
+      },
     })
 
     if (!user) {
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
       data: {
         emailVerified: true,
         verificationToken: null,
-      } as any,
+      },
     })
 
     // Küldjünk üdvözlő emailt

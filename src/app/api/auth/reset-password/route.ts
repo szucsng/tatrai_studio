@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import bcrypt from 'bcryptjs'
+import { hashPassword } from 'better-auth/crypto'
 
 export async function POST(req: NextRequest) {
   try {
@@ -37,8 +37,8 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Hash-eljük az új jelszót
-    const hashedPassword = await bcrypt.hash(password, 10)
+    // Ugyanazzal a hash-eléssel, amit a better-auth használ
+    const hashedPassword = await hashPassword(password)
 
     // Frissítsük a jelszót és töröljük a reset tokent
     await prisma.account.updateMany({

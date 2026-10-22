@@ -12,20 +12,20 @@ datasource db {
 }
 
 model User {
-  id                 String    @id @default(cuid())
-  email              String    @unique
-  name               String
-  emailVerified      DateTime?
-  image              String?
-  role               String    @default("user")
-  resetToken         String?   @unique
-  resetTokenExpiry   DateTime?
-  verificationToken  String?   @unique
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  sessions           Session[]
-  accounts           Account[]
-  organizedEvents    EventOrganizer[]
+  id                String           @id @default(cuid())
+  email             String           @unique
+  name              String
+  emailVerified     Boolean          @default(false)
+  image             String?
+  role              String           @default("user")
+  resetToken        String?          @unique
+  resetTokenExpiry  DateTime?
+  verificationToken String?          @unique
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  sessions          Session[]
+  accounts          Account[]
+  organizedEvents   EventOrganizer[]
 }
 
 model Session {
@@ -41,18 +41,20 @@ model Session {
 }
 
 model Account {
-  id                String   @id @default(cuid())
-  userId            String
-  accountId         String
-  providerId        String
-  accessToken       String?
-  refreshToken      String?
-  idToken           String?
-  expiresAt         DateTime?
-  password          String?
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   @@unique([providerId, accountId])
 }
@@ -69,14 +71,14 @@ model Verification {
 }
 
 model Event {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   name        String
   description String?
-  date        DateTime @default(now())
+  date        DateTime         @default(now())
   images      Image[]
   organizers  EventOrganizer[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
 
 model Image {
