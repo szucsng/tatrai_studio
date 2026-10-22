@@ -213,10 +213,10 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
 
         {event && (
           <>
-            <section className="container pb-10 pt-4 md:pt-8">
+            <section className="container pb-8 pt-4 md:pt-8">
               <Link
                 href="/galeria"
-                className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-white/55 transition-colors hover:text-[#E0A458] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
+                className="inline-flex items-center gap-2 text-sm text-white/55 transition-colors hover:text-[#E0A458] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
               >
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -224,26 +224,18 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                 Vissza a galériához
               </Link>
 
-              <p className="mt-10 text-[11px] uppercase tracking-[0.22em] text-[#E0A458]">
-                Esemény
-              </p>
-              <h1 className="mt-3 text-[clamp(2.5rem,6vw,5rem)] font-light leading-[0.95] tracking-tight">
+              <h1 className="mt-8 text-[clamp(2.5rem,5vw,4.5rem)] font-light leading-[1.05] tracking-tight">
                 {event.name}
               </h1>
 
-              <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.16em] text-white/55">
-                <span>{formatEventDate(event.date)}</span>
-                <span>{photos.length} fotó</span>
-                {videos.length > 0 && <span>{videos.length} videó</span>}
-                {organizers && (
-                  <span className="normal-case tracking-normal text-white/50">
-                    Szervező: {organizers}
-                  </span>
-                )}
-              </div>
+              <p className="mt-3 text-sm text-white/50">
+                {formatEventDate(event.date)} · {photos.length} fotó
+                {videos.length > 0 ? ` · ${videos.length} videó` : ''}
+                {organizers ? ` · ${organizers}` : ''}
+              </p>
 
               {event.description && (
-                <p className="mt-6 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
+                <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
                   {event.description}
                 </p>
               )}
@@ -251,92 +243,54 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
 
             <section className="container pb-16 md:pb-24">
               {event.images.length === 0 ? (
-                <div className="border border-white/10 px-6 py-16 text-center">
+                <div className="py-16 text-center">
                   <p className="text-lg font-light text-white/85">
                     Ebben az eseményben még nincs média
                   </p>
                   <Link
                     href="/galeria"
-                    className="mt-6 inline-block text-[11px] uppercase tracking-[0.16em] text-[#E0A458] underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
+                    className="mt-4 inline-block text-sm text-[#E0A458] underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
                   >
                     Vissza a galériához
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3 xl:grid-cols-4">
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3">
                   {event.images.map((image, index) => {
                     const video = isVideoFile(image.filename)
 
                     return (
-                      <div key={image.id} className="group relative">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setCurrentImageIndex(index)
-                            setLightboxOpen(true)
-                          }}
-                          aria-label={`${video ? 'Videó' : 'Kép'} megnyitása: ${image.filename}`}
-                          className="relative block aspect-square w-full overflow-hidden bg-white/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
-                        >
-                          {video ? (
-                            <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-white/55">
-                              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20">
-                                <svg className="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                  <path d="M8 5v14l11-7z" />
-                                </svg>
-                              </span>
-                              <span className="text-[10px] uppercase tracking-[0.16em]">Videó</span>
-                            </div>
-                          ) : (
-                            <img
-                              src={image.thumbPath || image.mediumPath || image.path}
-                              alt=""
-                              loading="lazy"
-                              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                            />
-                          )}
-                          <span
-                            className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/25"
-                            aria-hidden="true"
+                      <button
+                        key={image.id}
+                        type="button"
+                        onClick={() => {
+                          setCurrentImageIndex(index)
+                          setLightboxOpen(true)
+                        }}
+                        aria-label={`${video ? 'Videó' : 'Kép'} megnyitása: ${image.filename}`}
+                        className="group relative block aspect-square w-full overflow-hidden bg-white/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
+                      >
+                        {video ? (
+                          <div className="flex h-full w-full items-center justify-center text-white/55">
+                            <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20">
+                              <svg className="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </span>
+                          </div>
+                        ) : (
+                          <img
+                            src={image.thumbPath || image.mediumPath || image.path}
+                            alt=""
+                            loading="lazy"
+                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                           />
-                        </button>
-
-                        <div className="absolute right-2 top-2 flex gap-1.5 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
-                          <button
-                            type="button"
-                            onClick={(clickEvent) => {
-                              clickEvent.stopPropagation()
-                              handleShare(image.id)
-                            }}
-                            aria-label="Fájl linkjének másolása"
-                            title="Fájl linkjének másolása"
-                            className="flex h-11 w-11 items-center justify-center bg-black/70 text-white/85 transition-colors hover:bg-[#E0A458] hover:text-[#0b1016] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
-                          >
-                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                              <circle cx="18" cy="5" r="3" />
-                              <circle cx="6" cy="12" r="3" />
-                              <circle cx="18" cy="19" r="3" />
-                              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-                            </svg>
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={(clickEvent) => {
-                              clickEvent.stopPropagation()
-                              handleDownload(image.path, image.filename)
-                            }}
-                            aria-label="Fájl letöltése"
-                            title="Fájl letöltése"
-                            className="flex h-11 w-11 items-center justify-center bg-black/70 text-white/85 transition-colors hover:bg-[#E0A458] hover:text-[#0b1016] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
-                          >
-                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
+                        )}
+                        <span
+                          className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20"
+                          aria-hidden="true"
+                        />
+                      </button>
                     )
                   })}
                 </div>
