@@ -122,7 +122,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
   if (!event || !event.images) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7C3AED]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E0A458]"></div>
       </div>
     )
   }
@@ -188,7 +188,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
             <div className="flex items-center space-x-4">
               <Link 
                 href="/galeria" 
-                className="text-[#f5f5f5] hover:text-[#06B6D4] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#7C3AED]/20 border border-transparent hover:border-[#7C3AED]/30 flex items-center gap-2"
+                className="text-[#f5f5f5] hover:text-[#E0A458] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#E0A458]/15 border border-transparent hover:border-[#E0A458]/30 flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -203,7 +203,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
       <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl border border-white/10 p-8 mb-8">
           <h1 className="text-4xl font-extrabold mb-2">
-            <span className="bg-gradient-to-r from-[#7C3AED] via-[#8B5CF6] to-[#06B6D4] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#F0C27B] via-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
               {event.name}
             </span>
           </h1>
@@ -237,7 +237,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                 {event.organizers.map((organizer) => (
                   <span 
                     key={organizer.user.id} 
-                    className="bg-[#7C3AED]/20 text-[#06B6D4] px-3 py-1 rounded-full text-sm font-medium"
+                    className="bg-[#E0A458]/15 text-[#E0A458] px-3 py-1 rounded-full text-sm font-medium"
                   >
                     {organizer.user.name}
                   </span>
@@ -261,7 +261,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                   <div className="relative w-full h-full bg-gray-900 flex items-center justify-center">
                     <div className="text-center text-white">
                       <div className="flex justify-center mb-4">
-                        <VideoIcon className="w-16 h-16 text-[#06B6D4]" />
+                        <VideoIcon className="w-16 h-16 text-[#E0A458]" />
                       </div>
                       <div className="text-lg font-semibold mb-2">Videó</div>
                       <div className="text-sm opacity-75">Kattints a lejátszáshoz vagy letöltéshez</div>
@@ -279,7 +279,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 {isVideoFile(image.filename) && (
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 rounded-full p-4 pointer-events-none">
-                    <svg className="w-8 h-8 text-[#7C3AED]" fill="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-8 h-8 text-[#C77B3F]" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
                     </svg>
                   </div>
@@ -313,7 +313,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                     e.stopPropagation()
                     handleDownload(image.path, image.filename)
                   }}
-                  className="bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] hover:from-[#8B5CF6] hover:to-[#14C8E0] text-white p-3 rounded-xl shadow-lg hover:scale-110 transition-all"
+                  className="bg-gradient-to-r from-[#E0A458] to-[#C77B3F] hover:from-[#EDB56B] hover:to-[#D48A4A] text-[#0b0f18] p-3 rounded-xl shadow-lg hover:scale-110 transition-all"
                   title="Fájl letöltése eredeti minőségben"
                 >
                   <svg

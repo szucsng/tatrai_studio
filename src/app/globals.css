@@ -5,8 +5,8 @@
 
 :root {
   --primary-color: #0b1016;
-  --accent-color: #7C3AED;
-  --accent-warm: #06B6D4;
+  --accent-color: #E0A458;
+  --accent-warm: #C77B3F;
   --bg-color: #0b1016;
   --surface-color: rgba(255, 255, 255, 0.04);
   --text-color: #f5f5f5;
@@ -92,8 +92,8 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --primary-color: #0b1016;
-    --accent-color: #7C3AED;
-    --accent-warm: #06B6D4;
+    --accent-color: #E0A458;
+    --accent-warm: #C77B3F;
     --bg-color: #0b1016;
     --surface-color: rgba(255, 255, 255, 0.04);
     --text-color: #f5f5f5;
