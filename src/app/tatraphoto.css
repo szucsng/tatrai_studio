@@ -427,9 +427,31 @@ nav button:focus-visible,
 .marquee-track {
   display: flex;
   align-items: center;
-  gap: 28px;
   width: max-content;
   will-change: transform;
+  animation: marquee-scroll 30s linear infinite;
+}
+
+.marquee-group {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding-right: 28px;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
 }
 
 .brand-pill {
@@ -470,7 +492,7 @@ nav button:focus-visible,
 }
 
 .proof {
-  padding: 72px 0;
+  padding: 72px 0 24px;
 }
 
 .proof-head h2 {
@@ -616,7 +638,7 @@ nav button:focus-visible,
 
 /* ===== Stats ===== */
 .stats {
-  padding: 72px 0;
+  padding: 24px 0 72px;
   background: linear-gradient(180deg, rgba(8, 10, 14, 1), rgba(9, 11, 16, 1));
 }
 
@@ -1140,14 +1162,23 @@ nav button:focus-visible,
 
 /* ===== Responsive ===== */
 @media (min-width: 1024px) {
-  #proof, #portfolio, #about {
+  #proof {
+    min-height: auto;
+    padding: 80px 0 24px;
+  }
+
+  #portfolio, #about {
     min-height: 92vh;
     padding: 80px 0;
   }
 }
 
 @media (max-width: 1024px) {
-  #proof, #portfolio, #about {
+  #proof {
+    padding: 60px 0 24px;
+  }
+
+  #portfolio, #about {
     padding: 60px 0;
   }
 }
@@ -1286,8 +1317,12 @@ nav button:focus-visible,
     max-width: 170px;
   }
 
-  .marquee-track {
+  .marquee-group {
     gap: 18px;
+    padding-right: 18px;
+  }
+
+  .marquee-track {
     animation-duration: 18s;
   }
 }

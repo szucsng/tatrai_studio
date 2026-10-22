@@ -2,6 +2,14 @@
 
 import React, { useEffect } from "react";
 
+const brands = [
+  { name: "Miskolc Leves", src: "/l_alevesburger.jpg" },
+  { name: "BFT", src: "/l_bft.png" },
+  { name: "Csengely", src: "/l_csengelykertip.png" },
+  { name: "Mikorhol", src: "/l_mikorhol_fekete.jpg" },
+  { name: "Kandologo", src: "/l_kandologo.png" },
+];
+
 export default function Home(): React.ReactElement {
   const year = new Date().getFullYear();
 
@@ -92,11 +100,19 @@ export default function Home(): React.ReactElement {
       <section className="brand-marquee" aria-label="Kikkel dolgoztam már együtt">
         <div className="marquee" role="presentation">
           <div className="marquee-track">
-            <span className="brand-pill has-logo" aria-label="Miskolc Leves"><img src="/l_alevesburger.jpg" alt="" /></span>
-            <span className="brand-pill has-logo" aria-label="BFT"><img src="/l_bft.png" alt="" /></span>
-            <span className="brand-pill has-logo" aria-label="Csengely"><img src="/l_csengelykertip.png" alt="" /></span>
-            <span className="brand-pill has-logo" aria-label="Mikorhol"><img src="/l_mikorhol_fekete.jpg" alt="" /></span>
-            <span className="brand-pill has-logo" aria-label="Kandologo"><img src="/l_kandologo.png" alt="" /></span>
+            {[0, 1].map((group) => (
+              <div
+                key={group}
+                className="marquee-group"
+                aria-hidden={group === 1 ? true : undefined}
+              >
+                {brands.map((brand) => (
+                  <span key={brand.name} className="brand-pill has-logo" aria-label={brand.name}>
+                    <img src={brand.src} alt="" />
+                  </span>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </section>
