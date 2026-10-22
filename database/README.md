@@ -51,6 +51,8 @@ A projekt **egyetlen sémaforrása** a [`prisma/schema.prisma`](../prisma/schema
 | `npm run db:studio` | Prisma Studio az adatok böngészéséhez |
 | `npm run db:test` | MySQL kapcsolat és a táblák ellenőrzése |
 
+A `npm run build` a `prebuild` lépésben automatikusan lefuttatja a `prisma generate`-t, így a build mindig a friss sémát használja.
+
 ## Automatikus inicializálás induláskor
 
 A Pterodactyl startup commandba tedd bele a `db:init`-et a build elé:
