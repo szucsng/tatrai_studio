@@ -162,6 +162,8 @@ nav ul li:hover::after {
   display: none;
   background: none;
   border: none;
+  padding: 10px;
+  margin: -10px;
   font-size: 20px;
   cursor: pointer;
   color: currentColor;
@@ -241,6 +243,15 @@ nav ul li:hover::after {
 
 .btn:hover {
   transform: translateY(-1px);
+}
+
+.btn:focus-visible,
+nav a:focus-visible,
+nav button:focus-visible,
+.footer-links a:focus-visible,
+.social-btn:focus-visible {
+  outline: 2px solid #E0A458;
+  outline-offset: 3px;
 }
 
 .btn-primary {

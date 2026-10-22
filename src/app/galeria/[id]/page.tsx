@@ -1,13 +1,15 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
-import Lightbox from "yet-another-react-lightbox"
-import "yet-another-react-lightbox/styles.css"
-import Zoom from "yet-another-react-lightbox/plugins/zoom"
-import Video from "yet-another-react-lightbox/plugins/video"
-import { UsersIcon, VideoIcon } from "@/components/Icons"
+import { useSearchParams } from 'next/navigation'
+import Lightbox from 'yet-another-react-lightbox'
+import 'yet-another-react-lightbox/styles.css'
+import Zoom from 'yet-another-react-lightbox/plugins/zoom'
+import Video from 'yet-another-react-lightbox/plugins/video'
+import { GalleryFooter, GalleryHeader } from '@/components/GalleryChrome'
+import { formatEventDate } from '@/lib/format'
+import { isVideoFile } from '@/lib/media'
 
 interface Image {
   id: string
@@ -28,41 +30,57 @@ interface Event {
 
 export default function EventDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const router = useRouter()
   const searchParams = useSearchParams()
+  const imageParam = searchParams.get('image')
+
   const [event, setEvent] = useState<Event | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [reloadKey, setReloadKey] = useState(0)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showCopyToast, setShowCopyToast] = useState(false)
 
-  // Helper function to detect video files
-  const isVideoFile = (filename: string): boolean => {
-    const videoExtensions = ['.mp4', '.mov', '.avi', '.mkv', '.webm', '.m4v']
-    return videoExtensions.some(ext => filename.toLowerCase().endsWith(ext))
-  }
-
   useEffect(() => {
+    let cancelled = false
+
+    setError(null)
+
     fetch(`/api/events/${id}`)
-      .then(res => res.json())
-      .then(data => {
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error('Nem sikerült betölteni az eseményt.')
+        }
+        return response.json()
+      })
+      .then((data: Event) => {
+        if (cancelled) return
+
         setEvent(data)
-        const imageId = searchParams.get('image')
-        if (imageId && data.images) {
-          const index = data.images.findIndex((img: Image) => img.id === imageId)
+
+        if (imageParam && data.images) {
+          const index = data.images.findIndex((image) => image.id === imageParam)
           if (index !== -1) {
             setCurrentImageIndex(index)
             setLightboxOpen(true)
           }
         }
       })
-  }, [id, searchParams])
+      .catch(() => {
+        if (!cancelled) {
+          setError('A galéria betöltése nem sikerült.')
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [id, imageParam, reloadKey])
 
   const handleDownload = async (imagePath: string, filename: string) => {
     try {
       const response = await fetch(imagePath)
       const blob = await response.blob()
-      
-      // Ellenőrizzük a fájltípust és állítsuk be a megfelelő MIME type-ot
+
       let mimeType = blob.type
       if (!mimeType || mimeType === 'application/octet-stream') {
         const ext = filename.toLowerCase().split('.').pop()
@@ -72,7 +90,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
         else if (ext === 'mkv') mimeType = 'video/x-matroska'
         else if (ext === 'webm') mimeType = 'video/webm'
       }
-      
+
       const newBlob = new Blob([blob], { type: mimeType })
       const url = window.URL.createObjectURL(newBlob)
       const link = document.createElement('a')
@@ -82,347 +100,342 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
       link.click()
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
-    } catch (error) {
-      console.error('Hiba a fájl letöltése során:', error)
+    } catch (downloadError) {
+      console.error('Hiba a fájl letöltése során:', downloadError)
     }
   }
 
   const handleShare = async (imageId: string) => {
     const shareUrl = `${window.location.origin}/galeria/${id}?image=${imageId}`
+
     try {
-      // Ellenőrizzük hogy elérhető-e a clipboard API
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(shareUrl)
         setShowCopyToast(true)
         setTimeout(() => setShowCopyToast(false), 3000)
       } else {
-        // Fallback régi böngészőkhöz
         const textArea = document.createElement('textarea')
         textArea.value = shareUrl
         textArea.style.position = 'fixed'
         textArea.style.left = '-999999px'
         document.body.appendChild(textArea)
         textArea.select()
+
         try {
           document.execCommand('copy')
           setShowCopyToast(true)
           setTimeout(() => setShowCopyToast(false), 3000)
-        } catch (err) {
-          console.error('Fallback másolás sem sikerült:', err)
+        } catch {
           alert('Link másolása nem támogatott: ' + shareUrl)
         }
+
         document.body.removeChild(textArea)
       }
-    } catch (error) {
-      console.error('Nem sikerült a link másolása:', error)
+    } catch (shareError) {
+      console.error('Nem sikerült a link másolása:', shareError)
       alert('Nem sikerült a link másolása')
     }
   }
 
-  if (!event || !event.images) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#E0A458]"></div>
-      </div>
-    )
-  }
+  const photos = event?.images.filter((image) => !isVideoFile(image.filename)) ?? []
+  const videos = event?.images.filter((image) => isVideoFile(image.filename)) ?? []
+  const organizers =
+    event?.organizers?.map((organizer) => organizer.user.name).join(', ') ?? ''
 
-  const slides = event.images.map(img => {
-    if (isVideoFile(img.filename)) {
-      return {
-        type: 'video' as const,
-        sources: [
-          {
-            src: img.path,
-            type: 'video/mp4',
-          }
-        ],
-        width: 1920,
-        height: 1080,
-      }
-    }
-    return {
-      src: img.path,
-      srcSet: img.mediumPath ? [
-        {
-          src: img.thumbPath || img.path,
-          width: 300,
-          height: 300,
-        },
-        {
-          src: img.mediumPath,
-          width: 800,
-          height: 800,
-        },
-        {
-          src: img.path,
-          width: 3840,
-          height: 2160,
+  const slides =
+    event?.images.map((image) => {
+      if (isVideoFile(image.filename)) {
+        return {
+          type: 'video' as const,
+          sources: [{ src: image.path, type: 'video/mp4' }],
+          width: 1920,
+          height: 1080,
         }
-      ] : undefined,
-      alt: img.filename,
-      width: 3840,
-      height: 2160,
-    }
-  })
+      }
+
+      return {
+        src: image.path,
+        srcSet: image.mediumPath
+          ? [
+              { src: image.thumbPath || image.path, width: 300, height: 300 },
+              { src: image.mediumPath, width: 800, height: 800 },
+              { src: image.path, width: 3840, height: 2160 },
+            ]
+          : undefined,
+        alt: image.filename,
+        width: 3840,
+        height: 2160,
+      }
+    }) ?? []
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen bg-[#0b1016] text-[#f5f5f5]">
       <div className="grain" />
-      <div className="fixed inset-0 -z-10 bg-[#0b1016]" />
-      
-      <nav className="bg-[#0b1016]/80 backdrop-blur-xl shadow-sm border-b border-white/10 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-                <Link href="/">
-                <img 
-                  src="/logo.png" 
-                  alt="Logo" 
-                  width={40} 
-                  height={40} 
-                  className="object-contain cursor-pointer"
-                />
-              </Link>
+      <GalleryHeader />
+
+      <main className="pt-28">
+        {!event && !error && (
+          <div className="container py-16" role="status" aria-live="polite">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-white/55">
+              Galéria betöltése...
+            </p>
+            <div className="mt-8 grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3 xl:grid-cols-4">
+              {Array.from({ length: 8 }).map((_, index) => (
+                <div key={index} className="aspect-square animate-pulse bg-white/[0.04]" />
+              ))}
             </div>
-            <div className="flex items-center space-x-4">
-              <Link 
-                href="/galeria" 
-                className="text-[#f5f5f5] hover:text-[#E0A458] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#E0A458]/15 border border-transparent hover:border-[#E0A458]/30 flex items-center gap-2"
+          </div>
+        )}
+
+        {error && (
+          <div className="container py-24 text-center">
+            <p className="text-[11px] uppercase tracking-[0.22em] text-[#E0A458]">Hiba</p>
+            <h1 className="mt-3 text-3xl font-light tracking-tight md:text-4xl">
+              A galéria nem tölthető be
+            </h1>
+            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-white/55">
+              {error}
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setReloadKey((value) => value + 1)}
+                className="btn btn-primary"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
+                Újrapróbálás
+              </button>
+              <Link href="/galeria" className="btn btn-ghost">
                 Vissza a galériához
               </Link>
             </div>
           </div>
-        </div>
-      </nav>
+        )}
 
-      <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl shadow-xl border border-white/10 p-8 mb-8">
-          <h1 className="text-4xl font-extrabold mb-2">
-            <span className="bg-gradient-to-r from-[#F0C27B] via-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
-              {event.name}
-            </span>
-          </h1>
-          {event.description && (
-            <p className="text-[#9CA3AF] text-lg mb-3">{event.description}</p>
-          )}
-          <div className="flex items-center gap-4 text-sm text-[#9CA3AF] mb-3">
-            <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {new Date(event.date).toLocaleDateString('hu-HU', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {event.images.length} fájl
-            </span>
-          </div>
-          {event.organizers && event.organizers.length > 0 && (
-            <div className="flex items-center gap-2 text-sm">
-              <UsersIcon className="w-4 h-4 text-[#9CA3AF]" />
-              <span className="text-[#9CA3AF] font-medium">Szervezők:</span>
-              <div className="flex flex-wrap gap-2">
-                {event.organizers.map((organizer) => (
-                  <span 
-                    key={organizer.user.id} 
-                    className="bg-[#E0A458]/15 text-[#E0A458] px-3 py-1 rounded-full text-sm font-medium"
-                  >
-                    {organizer.user.name}
+        {event && (
+          <>
+            <section className="container pb-10 pt-4 md:pt-8">
+              <Link
+                href="/galeria"
+                className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-white/55 transition-colors hover:text-[#E0A458] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
+              >
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Vissza a galériához
+              </Link>
+
+              <p className="mt-10 text-[11px] uppercase tracking-[0.22em] text-[#E0A458]">
+                Esemény
+              </p>
+              <h1 className="mt-3 text-[clamp(2.5rem,6vw,5rem)] font-light leading-[0.95] tracking-tight">
+                {event.name}
+              </h1>
+
+              <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.16em] text-white/55">
+                <span>{formatEventDate(event.date)}</span>
+                <span>{photos.length} fotó</span>
+                {videos.length > 0 && <span>{videos.length} videó</span>}
+                {organizers && (
+                  <span className="normal-case tracking-normal text-white/50">
+                    Szervező: {organizers}
                   </span>
-                ))}
+                )}
               </div>
-            </div>
-          )}
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {event.images.map((image, index) => (
-            <div key={image.id} className="relative group">
-              <button
-                onClick={() => {
-                  setCurrentImageIndex(index)
-                  setLightboxOpen(true)
-                }}
-                className="relative aspect-square rounded-2xl overflow-hidden hover:opacity-90 transition-all cursor-pointer w-full shadow-md hover:shadow-xl hover:scale-105 duration-300"
-              >
-                {isVideoFile(image.filename) ? (
-                  <div className="relative w-full h-full bg-gray-900 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <div className="flex justify-center mb-4">
-                        <VideoIcon className="w-16 h-16 text-[#E0A458]" />
+              {event.description && (
+                <p className="mt-6 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
+                  {event.description}
+                </p>
+              )}
+            </section>
+
+            <section className="container pb-16 md:pb-24">
+              {event.images.length === 0 ? (
+                <div className="border border-white/10 px-6 py-16 text-center">
+                  <p className="text-lg font-light text-white/85">
+                    Ebben az eseményben még nincs média
+                  </p>
+                  <Link
+                    href="/galeria"
+                    className="mt-6 inline-block text-[11px] uppercase tracking-[0.16em] text-[#E0A458] underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
+                  >
+                    Vissza a galériához
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-3 xl:grid-cols-4">
+                  {event.images.map((image, index) => {
+                    const video = isVideoFile(image.filename)
+
+                    return (
+                      <div key={image.id} className="group relative">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCurrentImageIndex(index)
+                            setLightboxOpen(true)
+                          }}
+                          aria-label={`${video ? 'Videó' : 'Kép'} megnyitása: ${image.filename}`}
+                          className="relative block aspect-square w-full overflow-hidden bg-white/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
+                        >
+                          {video ? (
+                            <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-white/55">
+                              <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20">
+                                <svg className="ml-0.5 h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                  <path d="M8 5v14l11-7z" />
+                                </svg>
+                              </span>
+                              <span className="text-[10px] uppercase tracking-[0.16em]">Videó</span>
+                            </div>
+                          ) : (
+                            <img
+                              src={image.thumbPath || image.mediumPath || image.path}
+                              alt=""
+                              loading="lazy"
+                              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                            />
+                          )}
+                          <span
+                            className="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/25"
+                            aria-hidden="true"
+                          />
+                        </button>
+
+                        <div className="absolute right-2 top-2 flex gap-1.5 opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
+                          <button
+                            type="button"
+                            onClick={(clickEvent) => {
+                              clickEvent.stopPropagation()
+                              handleShare(image.id)
+                            }}
+                            aria-label="Fájl linkjének másolása"
+                            title="Fájl linkjének másolása"
+                            className="flex h-11 w-11 items-center justify-center bg-black/70 text-white/85 transition-colors hover:bg-[#E0A458] hover:text-[#0b1016] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
+                          >
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                              <circle cx="18" cy="5" r="3" />
+                              <circle cx="6" cy="12" r="3" />
+                              <circle cx="18" cy="19" r="3" />
+                              <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                              <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                            </svg>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(clickEvent) => {
+                              clickEvent.stopPropagation()
+                              handleDownload(image.path, image.filename)
+                            }}
+                            aria-label="Fájl letöltése"
+                            title="Fájl letöltése"
+                            className="flex h-11 w-11 items-center justify-center bg-black/70 text-white/85 transition-colors hover:bg-[#E0A458] hover:text-[#0b1016] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E0A458]"
+                          >
+                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
-                      <div className="text-lg font-semibold mb-2">Videó</div>
-                      <div className="text-sm opacity-75">Kattints a lejátszáshoz vagy letöltéshez</div>
-                    </div>
-                  </div>
-                ) : (
-                  <img
-                    src={image.thumbPath || image.path}
-                    alt={image.filename}
-                    className="object-cover"
-                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
-                    loading="lazy"
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                {isVideoFile(image.filename) && (
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/90 rounded-full p-4 pointer-events-none">
-                    <svg className="w-8 h-8 text-[#C77B3F]" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
+                    )
+                  })}
+                </div>
+              )}
+            </section>
+
+            <Lightbox
+              open={lightboxOpen}
+              close={() => setLightboxOpen(false)}
+              slides={slides}
+              index={currentImageIndex}
+              plugins={[Zoom, Video]}
+              on={{ view: ({ index }) => setCurrentImageIndex(index) }}
+              zoom={{
+                maxZoomPixelRatio: 5,
+                scrollToZoom: true,
+                doubleClickMaxStops: 3,
+              }}
+              video={{
+                controls: true,
+                autoPlay: false,
+                playsInline: true,
+              }}
+              toolbar={{
+                buttons: [
+                  <button
+                    key="share"
+                    type="button"
+                    aria-label="Megosztás"
+                    className="yarl__button"
+                    onClick={() => {
+                      const imageId = event.images[currentImageIndex]?.id
+                      if (imageId) {
+                        handleShare(imageId)
+                      }
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="yarl__icon"
+                    >
+                      <circle cx="18" cy="5" r="3" />
+                      <circle cx="6" cy="12" r="3" />
+                      <circle cx="18" cy="19" r="3" />
+                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
                     </svg>
-                  </div>
-                )}
-              </button>
-              <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleShare(image.id)
-                  }}
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white p-3 rounded-xl shadow-lg hover:scale-110 transition-all"
-                  title="Fájl megosztása - link másolása"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                  </button>,
+                  <button
+                    key="download"
+                    type="button"
+                    aria-label="Letöltés"
+                    className="yarl__button"
+                    onClick={() => {
+                      const image = event.images[currentImageIndex]
+                      if (image) {
+                        handleDownload(image.path, image.filename)
+                      }
+                    }}
                   >
-                    <path
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    handleDownload(image.path, image.filename)
-                  }}
-                  className="bg-gradient-to-r from-[#E0A458] to-[#C77B3F] hover:from-[#EDB56B] hover:to-[#D48A4A] text-[#0b0f18] p-3 rounded-xl shadow-lg hover:scale-110 transition-all"
-                  title="Fájl letöltése eredeti minőségben"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <Lightbox
-          open={lightboxOpen}
-          close={() => setLightboxOpen(false)}
-          slides={slides}
-          index={currentImageIndex}
-          plugins={[Zoom, Video]}
-          zoom={{
-            maxZoomPixelRatio: 5,
-            scrollToZoom: true,
-            doubleClickMaxStops: 3,
-          }}
-          video={{
-            controls: true,
-            autoPlay: false,
-            playsInline: true,
-          }}
-          toolbar={{
-            buttons: [
-              <button
-                key="share"
-                type="button"
-                aria-label="Megosztás"
-                className="yarl__button"
-                onClick={() => {
-                  const imageId = event?.images[currentImageIndex]?.id
-                  if (imageId) {
-                    handleShare(imageId)
-                  }
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="yarl__icon"
-                >
-                  <circle cx="18" cy="5" r="3" />
-                  <circle cx="6" cy="12" r="3" />
-                  <circle cx="18" cy="19" r="3" />
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
-                </svg>
-              </button>,
-              <button
-                key="download"
-                type="button"
-                aria-label="Letöltés"
-                className="yarl__button"
-                onClick={() => {
-                  const image = event?.images[currentImageIndex]
-                  if (image) {
-                    handleDownload(image.path, image.filename)
-                  }
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="yarl__icon"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-              </button>,
-              "close",
-            ],
-          }}
-        />
-
-        {showCopyToast && (
-          <div className="fixed bottom-8 right-8 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 animate-slide-up z-50">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-            <span className="font-semibold">Link vágólapra másolva!</span>
-          </div>
+                      className="yarl__icon"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                  </button>,
+                  'close',
+                ],
+              }}
+            />
+          </>
         )}
       </main>
+
+      <GalleryFooter />
+
+      {showCopyToast && (
+        <div
+          role="status"
+          className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 animate-slide-up border border-[#E0A458]/40 bg-[#0b1016] px-4 py-3 text-sm text-[#E0A458] shadow-xl"
+        >
+          Link a vágólapra másolva.
+        </div>
+      )}
     </div>
   )
 }
