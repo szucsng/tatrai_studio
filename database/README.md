@@ -82,6 +82,24 @@ bash -c "git pull --ff-only origin main && npm install --include=dev && npm run 
 
 Ne módosítsd kézzel a táblákat phpMyAdminban, mert a Prisma sémától eltérő állapot jön létre.
 
+## Hibakeresés
+
+Ha az alkalmazás azt írja, hogy egy tábla nem létezik (pl. `The table Event does not exist`):
+
+1. Futtasd a szerveren:
+
+   ```bash
+   npm run db:init
+   ```
+
+   A parancs kiírja az adatbázis nevét, a hostot és a meglévő táblákat.
+
+2. Ellenőrizd, hogy ugyanaz az adatbázisnév szerepel-e a `.env` `DATABASE_URL` értékében, mint amit a `db:init` kiírt.
+
+3. Ha a `db:init` szerint vannak migrációk, de a táblák hiányoznak, a migrációs history sérült. Ilyenkor ürítsd a friss adatbázist, majd futtasd újra a `db:init`-et, vagy importáld a `database/schema.sql`-t.
+
+4. A `npm run db:test` paranccsal külön is ellenőrizhető a kapcsolat és a hiányzó táblák listája.
+
 ## Régi fájlok
 
 A gyökérben korábban szétszórt SQL fájlok (`setup-database.sql`, `add-email-features.sql`, `MANUAL-DB-UPDATE.sql`, `migrate_user_table.sql`, `fix-database.sql`, `kepweb.sql`, `dev.db`) a `database/legacy/` mappába kerültek, és a git már nem követi őket. Új telepítéshez nem szükségesek.
