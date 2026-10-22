@@ -411,20 +411,20 @@ export default function AdminPage() {
                 priority
                 className="object-contain"
               />
-              <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+              <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
                 Admin Panel
               </Link>
             </div>
             <div className="flex items-center space-x-4">
               <Link 
                 href="/galeria" 
-                className="text-[#f5f5f5] hover:text-[#06B6D4] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#7C3AED]/20 border border-transparent hover:border-[#7C3AED]/30 flex items-center gap-2"
+                className="text-[#f5f5f5] hover:text-[#C77B3F] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#E0A458]/20 border border-transparent hover:border-[#E0A458]/30 flex items-center gap-2"
               >
                 <GalleryIcon className="w-4 h-4" />
                 Galéria
               </Link>
-              <div className="flex items-center space-x-3 px-4 py-2 bg-[#7C3AED]/20 rounded-lg border border-[#7C3AED]/30">
-                <div className="w-8 h-8 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] rounded-full flex items-center justify-center text-white font-bold">
+              <div className="flex items-center space-x-3 px-4 py-2 bg-[#E0A458]/20 rounded-lg border border-[#E0A458]/30">
+                <div className="w-8 h-8 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] rounded-full flex items-center justify-center text-white font-bold">
                   {user?.name?.charAt(0).toUpperCase() || 'A'}
                 </div>
                 <span className="text-sm font-medium text-[#f5f5f5]">{user?.name || 'Admin'}</span>
@@ -448,11 +448,11 @@ export default function AdminPage() {
               onClick={() => setActiveTab('dashboard')}
               className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'dashboard'
-                  ? 'bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-[#0b0f18] shadow-md'
-                  : 'text-[#f5f5f5] hover:bg-[#7C3AED]/20'
+                  ? 'bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] shadow-md'
+                  : 'text-[#f5f5f5] hover:bg-[#E0A458]/20'
               }`}
             >
-              <CalendarIcon className={`w-5 h-5 ${activeTab === 'dashboard' ? 'text-[#0b0f18]' : 'text-[#06B6D4]'}`} />
+              <CalendarIcon className={`w-5 h-5 ${activeTab === 'dashboard' ? 'text-[#0b0f18]' : 'text-[#C77B3F]'}`} />
               Dashboard
             </button>
             <button
@@ -462,22 +462,22 @@ export default function AdminPage() {
               }}
               className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'events'
-                  ? 'bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-[#0b0f18] shadow-md'
-                  : 'text-[#f5f5f5] hover:bg-[#7C3AED]/20'
+                  ? 'bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] shadow-md'
+                  : 'text-[#f5f5f5] hover:bg-[#E0A458]/20'
               }`}
             >
-              <CalendarIcon className={`w-5 h-5 ${activeTab === 'events' ? 'text-[#0b0f18]' : 'text-[#06B6D4]'}`} />
+              <CalendarIcon className={`w-5 h-5 ${activeTab === 'events' ? 'text-[#0b0f18]' : 'text-[#C77B3F]'}`} />
               Események
             </button>
             <button
               onClick={() => setActiveTab('profile')}
               className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'profile'
-                  ? 'bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-[#0b0f18] shadow-md'
-                  : 'text-[#f5f5f5] hover:bg-[#7C3AED]/20'
+                  ? 'bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] shadow-md'
+                  : 'text-[#f5f5f5] hover:bg-[#E0A458]/20'
               }`}
             >
-              <UsersIcon className={`w-5 h-5 ${activeTab === 'profile' ? 'text-[#0b0f18]' : 'text-[#06B6D4]'}`} />
+              <UsersIcon className={`w-5 h-5 ${activeTab === 'profile' ? 'text-[#0b0f18]' : 'text-[#C77B3F]'}`} />
               Profil
             </button>
             {(user?.role === 'admin' || user?.role === 'organizer') && (
@@ -488,11 +488,11 @@ export default function AdminPage() {
                 }}
                 className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                   activeTab === 'organizers'
-                    ? 'bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-[#0b0f18] shadow-md'
-                    : 'text-[#f5f5f5] hover:bg-[#7C3AED]/20'
+                    ? 'bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] shadow-md'
+                    : 'text-[#f5f5f5] hover:bg-[#E0A458]/20'
                 }`}
               >
-                <UsersIcon className={`w-5 h-5 ${activeTab === 'organizers' ? 'text-[#0b0f18]' : 'text-[#06B6D4]'}`} />
+                <UsersIcon className={`w-5 h-5 ${activeTab === 'organizers' ? 'text-[#0b0f18]' : 'text-[#C77B3F]'}`} />
                 Szervezők
               </button>
             )}
@@ -504,7 +504,7 @@ export default function AdminPage() {
           <div className="space-y-8">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] rounded-2xl shadow-xl p-6 text-[#0b0f18]">
+              <div className="bg-gradient-to-br from-[#E0A458] to-[#C77B3F] rounded-2xl shadow-xl p-6 text-[#0b0f18]">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-white/70 text-sm font-medium">Összes esemény</p>
@@ -516,7 +516,7 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-[#06B6D4] to-[#7C3AED] rounded-2xl shadow-xl p-6 text-[#0b0f18]">
+              <div className="bg-gradient-to-br from-[#C77B3F] to-[#E0A458] rounded-2xl shadow-xl p-6 text-[#0b0f18]">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-white/70 text-sm font-medium">Összes fájl</p>
@@ -528,7 +528,7 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] rounded-2xl shadow-xl p-6 text-[#0b0f18]">
+              <div className="bg-gradient-to-br from-[#E0A458] to-[#EDB56B] rounded-2xl shadow-xl p-6 text-[#0b0f18]">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-white/70 text-sm font-medium">Új események (30 nap)</p>
@@ -541,7 +541,7 @@ export default function AdminPage() {
 
             {/* Recent Events */}
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
                 Legutóbbi események
               </h2>
               {events.slice(0, 5).length === 0 ? (
@@ -558,7 +558,7 @@ export default function AdminPage() {
                       </div>
                       <button
                         onClick={() => handleEdit(event)}
-                        className="px-4 py-2 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] text-[#0b0f18] rounded-lg text-sm font-medium hover:shadow-lg transition-all"
+                        className="px-4 py-2 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] rounded-lg text-sm font-medium hover:shadow-lg transition-all"
                       >
                         Szerkesztés
                       </button>
@@ -570,13 +570,13 @@ export default function AdminPage() {
 
             {/* Quick Actions */}
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
                 Gyors műveletek
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button
                   onClick={() => setActiveTab('events')}
-                  className="p-6 border-2 border-[#7C3AED]/50 rounded-xl hover:border-[#7C3AED] hover:bg-[#7C3AED]/20 transition-all text-left"
+                  className="p-6 border-2 border-[#E0A458]/50 rounded-xl hover:border-[#E0A458] hover:bg-[#E0A458]/20 transition-all text-left"
                 >
                   <div className="text-3xl mb-2">➕</div>
                   <h3 className="font-semibold text-[#f5f5f5] mb-1">Új esemény létrehozása</h3>
@@ -584,10 +584,10 @@ export default function AdminPage() {
                 </button>
                 <Link
                   href="/galeria"
-                  className="p-6 border-2 border-[#06B6D4]/50 rounded-xl hover:border-[#06B6D4] hover:bg-[#06B6D4]/20 transition-all text-left"
+                  className="p-6 border-2 border-[#C77B3F]/50 rounded-xl hover:border-[#C77B3F] hover:bg-[#C77B3F]/20 transition-all text-left"
                 >
                   <div className="flex justify-center mb-2">
-                    <GalleryIcon className="w-8 h-8 text-[#06B6D4]" />
+                    <GalleryIcon className="w-8 h-8 text-[#C77B3F]" />
                   </div>
                   <h3 className="font-semibold text-[#f5f5f5] mb-1">Galéria megtekintése</h3>
                   <p className="text-sm text-[#9CA3AF]">Nézd meg a nyilvános galériát</p>
@@ -602,7 +602,7 @@ export default function AdminPage() {
           <div className="space-y-8">
             {/* Create/Edit Form */}
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
                 {editingEvent ? 'Esemény szerkesztése' : 'Új esemény létrehozása'}
               </h2>
 
@@ -628,7 +628,7 @@ export default function AdminPage() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none"
+                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] transition-all outline-none"
                     required
                   />
                 </div>
@@ -642,7 +642,7 @@ export default function AdminPage() {
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none"
+                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] transition-all outline-none"
                   />
                 </div>
 
@@ -655,7 +655,7 @@ export default function AdminPage() {
                     type="date"
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none"
+                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] transition-all outline-none"
                   />
                 </div>
 
@@ -681,10 +681,10 @@ export default function AdminPage() {
                                   setFormData({ ...formData, organizerIds: formData.organizerIds.filter(id => id !== u.id) })
                                 }
                               }}
-                              className="w-4 h-4 text-[#7C3AED] border-white/30 rounded focus:ring-[#7C3AED] bg-[#0b1016]"
+                              className="w-4 h-4 text-[#E0A458] border-white/30 rounded focus:ring-[#E0A458] bg-[#0b1016]"
                             />
                             <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] rounded-full flex items-center justify-center text-white font-bold text-xs">
+                              <div className="w-8 h-8 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] rounded-full flex items-center justify-center text-white font-bold text-xs">
                                 {u.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
@@ -711,7 +711,7 @@ export default function AdminPage() {
                     multiple
                     accept="image/*,video/*"
                     onChange={(e) => setSelectedFiles(e.target.files)}
-                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-[#7C3AED] file:to-[#06B6D4] file:text-[#0b0f18] hover:file:from-[#8B5CF6] hover:file:to-[#14C8E0]"
+                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-to-r file:from-[#E0A458] file:to-[#C77B3F] file:text-[#0b0f18] hover:file:from-[#EDB56B] hover:file:to-[#D48A4A]"
                     required={!editingEvent}
                   />
                   {selectedFiles && (
@@ -723,14 +723,14 @@ export default function AdminPage() {
                   {uploadProgress > 0 && (
                     <div className="mt-4 space-y-2">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-[#06B6D4]">
+                        <span className="text-sm font-medium text-[#C77B3F]">
                           {uploadStatus || `Feltöltés: ${uploadProgress}%`}
                         </span>
                         <span className="text-xs text-[#9CA3AF]">Kérjük várjon...</span>
                       </div>
                       <div className="w-full bg-[#0b1016] rounded-full h-2 overflow-hidden border border-white/10">
                         <div
-                          className="bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] h-full transition-all duration-300 ease-out"
+                          className="bg-gradient-to-r from-[#E0A458] to-[#C77B3F] h-full transition-all duration-300 ease-out"
                           style={{ width: `${uploadProgress}%` }}
                         ></div>
                       </div>
@@ -742,7 +742,7 @@ export default function AdminPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] hover:from-[#8B5CF6] hover:to-[#14C8E0] text-[#0b0f18] font-semibold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                    className="flex-1 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] hover:from-[#EDB56B] hover:to-[#D48A4A] text-[#0b0f18] font-semibold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                   >
                     {loading ? (editingEvent ? 'Frissítés...' : 'Létrehozás...') : (editingEvent ? 'Esemény frissítése' : 'Esemény létrehozása')}
                   </button>
@@ -761,14 +761,14 @@ export default function AdminPage() {
 
             {/* Events List */}
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
                 Meglévő események ({events.length})
               </h2>
 
               {events.length === 0 ? (
                 <div className="text-center py-12">
                   <div className="flex justify-center mb-4">
-                    <GalleryIcon className="w-16 h-16 text-[#06B6D4]" />
+                    <GalleryIcon className="w-16 h-16 text-[#C77B3F]" />
                   </div>
                   <p className="text-[#9CA3AF]">
                     Még nincsenek események. Hozz létre egyet!
@@ -777,7 +777,7 @@ export default function AdminPage() {
               ) : (
                 <div className="space-y-4">
                   {events.map((event) => (
-                    <div key={event.id} className="border border-white/10 rounded-xl p-6 hover:shadow-lg transition-all hover:border-[#7C3AED]/50 bg-white/5">
+                    <div key={event.id} className="border border-white/10 rounded-xl p-6 hover:shadow-lg transition-all hover:border-[#E0A458]/50 bg-white/5">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-1">
                           <h3 className="text-xl font-semibold text-[#f5f5f5] mb-2">{event.name}</h3>
@@ -798,7 +798,7 @@ export default function AdminPage() {
                                 {event.organizers.map((organizer) => (
                                   <span 
                                     key={organizer.user.id} 
-                                    className="text-xs bg-[#7C3AED]/20 text-[#06B6D4] px-2 py-1 rounded-full font-medium"
+                                    className="text-xs bg-[#E0A458]/20 text-[#C77B3F] px-2 py-1 rounded-full font-medium"
                                   >
                                     {organizer.user.name}
                                   </span>
@@ -810,7 +810,7 @@ export default function AdminPage() {
                         <div className="flex gap-2 ml-4">
                           <button
                             onClick={() => handleEdit(event)}
-                            className="bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] hover:from-[#8B5CF6] hover:to-[#14C8E0] text-[#0b0f18] px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
+                            className="bg-gradient-to-r from-[#E0A458] to-[#C77B3F] hover:from-[#EDB56B] hover:to-[#D48A4A] text-[#0b0f18] px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
                           >
                             Szerkesztés
                           </button>
@@ -831,7 +831,7 @@ export default function AdminPage() {
                               <div key={image.id} className="relative group">
                                 <div className="relative aspect-square rounded-xl overflow-hidden bg-[#0b1016] shadow-md group-hover:shadow-lg transition-shadow">
                                   {isVideoFile(image.filename) ? (
-                                    <div className="w-full h-full bg-gradient-to-br from-[#7C3AED] to-[#06B6D4] flex items-center justify-center">
+                                    <div className="w-full h-full bg-gradient-to-br from-[#E0A458] to-[#C77B3F] flex items-center justify-center">
                                       <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
                                         <path d="M8 5v14l11-7z"/>
                                       </svg>
@@ -873,12 +873,12 @@ export default function AdminPage() {
           <div className="space-y-8">
             {/* Profile Info */}
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
                 Profil beállítások
               </h2>
 
               <div className="flex items-center space-x-6 mb-8 pb-8 border-b border-white/10">
-                <div className="w-24 h-24 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl">
+                <div className="w-24 h-24 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl">
                   {user?.name?.charAt(0).toUpperCase() || 'A'}
                 </div>
                 <div>
@@ -920,7 +920,7 @@ export default function AdminPage() {
                     type="text"
                     value={profileData.name}
                     onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none"
+                    className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] transition-all outline-none"
                   />
                 </div>
 
@@ -950,7 +950,7 @@ export default function AdminPage() {
                         type="password"
                         value={profileData.currentPassword}
                         onChange={(e) => setProfileData({ ...profileData, currentPassword: e.target.value })}
-                        className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none"
+                        className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] transition-all outline-none"
                       />
                     </div>
 
@@ -963,7 +963,7 @@ export default function AdminPage() {
                         type="password"
                         value={profileData.newPassword}
                         onChange={(e) => setProfileData({ ...profileData, newPassword: e.target.value })}
-                        className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none"
+                        className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] transition-all outline-none"
                         minLength={8}
                       />
                     </div>
@@ -977,7 +977,7 @@ export default function AdminPage() {
                         type="password"
                         value={profileData.confirmPassword}
                         onChange={(e) => setProfileData({ ...profileData, confirmPassword: e.target.value })}
-                        className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#7C3AED] focus:border-[#7C3AED] transition-all outline-none"
+                        className="w-full px-4 py-3 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] transition-all outline-none"
                         minLength={8}
                       />
                     </div>
@@ -987,7 +987,7 @@ export default function AdminPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] hover:from-[#8B5CF6] hover:to-[#14C8E0] text-[#0b0f18] font-semibold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+                  className="w-full bg-gradient-to-r from-[#E0A458] to-[#C77B3F] hover:from-[#EDB56B] hover:to-[#D48A4A] text-[#0b0f18] font-semibold py-3 px-4 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                 >
                   {loading ? 'Mentés...' : 'Módosítások mentése'}
                 </button>
@@ -996,7 +996,7 @@ export default function AdminPage() {
 
             {/* Account Info */}
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
                 Fiók információk
               </h2>
               <div className="space-y-4 text-sm">
@@ -1025,7 +1025,7 @@ export default function AdminPage() {
         {activeTab === 'organizers' && (
           <div className="space-y-8">
             <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] bg-clip-text text-transparent">
+              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
                 Szervezők kezelése
               </h2>
               
@@ -1043,7 +1043,7 @@ export default function AdminPage() {
                       className="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-r from-[#7C3AED] to-[#06B6D4] rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        <div className="w-12 h-12 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] rounded-full flex items-center justify-center text-white font-bold text-lg">
                           {u.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
@@ -1064,7 +1064,7 @@ export default function AdminPage() {
                           </span>
                         )}
                         {u.id === user?.id && (
-                          <span className="text-xs bg-[#7C3AED]/20 text-[#06B6D4] px-3 py-1 rounded-full font-medium">
+                          <span className="text-xs bg-[#E0A458]/20 text-[#C77B3F] px-3 py-1 rounded-full font-medium">
                             Te vagy
                           </span>
                         )}

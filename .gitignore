@@ -7,3 +7,6 @@
 
 # Legacy adatbázis dumpok (helyi archiválás)
 database/legacy/
+
+# Egyszeri felhasználó létrehozó SQL (jelszó-hash, ne kerüljön nyilvános repóba)
+database/create-user.sql

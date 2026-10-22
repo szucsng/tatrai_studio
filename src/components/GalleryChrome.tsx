@@ -2,7 +2,11 @@
 
 import Link from 'next/link'
 
-export function GalleryHeader() {
+type ActivePage = 'fooldal' | 'galeria' | 'kapcsolat'
+
+export function SiteHeader({ active }: { active?: ActivePage }) {
+  const activeClass = (page: ActivePage) => (page === active ? 'text-[#E0A458]' : undefined)
+
   return (
     <header>
       <div className="container header-container">
@@ -15,15 +19,19 @@ export function GalleryHeader() {
           </button>
           <ul>
             <li>
-              <Link href="/">Főoldal</Link>
+              <Link href="/" className={activeClass('fooldal')} aria-current={active === 'fooldal' ? 'page' : undefined}>
+                Főoldal
+              </Link>
             </li>
             <li>
-              <Link href="/galeria" className="text-[#E0A458]" aria-current="page">
+              <Link href="/galeria" className={activeClass('galeria')} aria-current={active === 'galeria' ? 'page' : undefined}>
                 Galéria
               </Link>
             </li>
             <li>
-              <Link href="/#faq">Kapcsolat</Link>
+              <Link href="/#faq" className={activeClass('kapcsolat')} aria-current={active === 'kapcsolat' ? 'page' : undefined}>
+                Kapcsolat
+              </Link>
             </li>
           </ul>
         </nav>
@@ -32,7 +40,11 @@ export function GalleryHeader() {
   )
 }
 
-export function GalleryFooter() {
+export function GalleryHeader() {
+  return <SiteHeader active="galeria" />
+}
+
+export function SiteFooter() {
   const year = new Date().getFullYear()
 
   return (
@@ -77,7 +89,16 @@ export function GalleryFooter() {
 
       <div className="container footer-bottom">
         <p>© {year} Tátrai Levente. Minden jog fenntartva.</p>
+        <div className="footer-legal">
+          <a href="#">Adatkezelési tájékoztató</a>
+          <span className="sep">•</span>
+          <a href="#">Impresszum</a>
+        </div>
       </div>
     </footer>
   )
+}
+
+export function GalleryFooter() {
+  return <SiteFooter />
 }

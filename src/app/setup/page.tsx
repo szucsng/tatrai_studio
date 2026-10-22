@@ -1,15 +1,15 @@
 'use client'
 
-import Link from 'next/link'
 import { useState } from 'react'
-import { SettingsIcon } from '@/components/Icons'
+import AuthShell from '@/components/AuthShell'
+import { inputClass, labelClass } from '@/components/authStyles'
 
 export default function SetupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('Admin')
   const [secret, setSecret] = useState('')
-  const [result, setResult] = useState<string>('')
+  const [result, setResult] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,118 +20,108 @@ export default function SetupPage() {
     try {
       const response = await fetch('/api/setup/create-admin', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, name, secret }),
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        setResult(`✅ Siker!\n${JSON.stringify(data, null, 2)}`)
+        setResult(`Siker:\n${JSON.stringify(data, null, 2)}`)
       } else {
-        setResult(`❌ Hiba!\n${JSON.stringify(data, null, 2)}`)
+        setResult(`Hiba:\n${JSON.stringify(data, null, 2)}`)
       }
     } catch (error: any) {
-      setResult(`❌ Hiba történt:\n${error.message}`)
+      setResult(`Hiba:\n${error?.message || 'Hálózati hiba történt'}`)
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen relative">
-      <div className="grain" />
-      <div className="fixed inset-0 -z-10 bg-[#0b1016]" />
-      <div className="relative z-10 max-w-4xl mx-auto p-8">
-        <nav className="flex items-center gap-6 mb-8 text-sm">
-          <Link href="/" className="text-[#9CA3AF] hover:text-[#E0A458] transition-colors">
-            ← Vissza a főoldalra
-          </Link>
-          <Link href="/admin/login" className="text-[#9CA3AF] hover:text-[#E0A458] transition-colors">
-            Admin bejelentkezés →
-          </Link>
-        </nav>
-
-        <h1 className="text-3xl font-bold mb-8 flex items-center gap-3 text-[#f5f5f5]">
-          <SettingsIcon className="w-8 h-8 text-[#E0A458]" />
-          Admin Felhasználó Létrehozása
-        </h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white/5 backdrop-blur-xl border border-white/10 p-6 rounded-2xl shadow-xl">
-            <h2 className="text-xl font-semibold mb-4 text-[#f5f5f5]">Felhasználói adatok</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1 text-[#9CA3AF]">Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] outline-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1 text-[#9CA3AF]">Jelszó</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] outline-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1 text-[#9CA3AF]">Név</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] outline-none"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-1 text-[#9CA3AF]">Titkos kulcs</label>
-                <input
-                  type="password"
-                  value={secret}
-                  onChange={(e) => setSecret(e.target.value)}
-                  className="w-full px-3 py-2 bg-[#0b1016]/50 border border-white/10 text-[#f5f5f5] rounded-xl focus:ring-2 focus:ring-[#E0A458] focus:border-[#E0A458] outline-none"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-[#E0A458] to-[#C77B3F] hover:from-[#EDB56B] hover:to-[#D48A4A] text-[#0b0f18] font-bold py-2 px-4 rounded-xl transition-all disabled:opacity-50"
-              >
-                {loading ? 'Létrehozás...' : 'Admin Létrehozása'}
-              </button>
-            </form>
+    <AuthShell
+      title="Első admin létrehozása"
+      description="Add meg az admin adatait, majd a szerver .env fájljában lévő ADMIN_SETUP_SECRET értéket."
+      maxWidth="max-w-4xl"
+      align="start"
+    >
+      <div className="grid gap-6 md:grid-cols-2">
+        <form onSubmit={handleSubmit} className="space-y-5 border border-white/10 bg-white/[0.02] p-6">
+          <div>
+            <label htmlFor="email" className={labelClass}>
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={inputClass}
+              autoComplete="email"
+              required
+            />
           </div>
 
-          <div className="bg-black/60 backdrop-blur-xl border border-white/10 p-6 rounded-2xl font-mono text-sm shadow-xl">
-            <h2 className="text-xl font-semibold mb-4 font-sans text-[#f5f5f5]">Console kimenet</h2>
-            <pre className="whitespace-pre-wrap break-words text-green-400">
-              {result || '> Várakozás...'}
-            </pre>
+          <div>
+            <label htmlFor="password" className={labelClass}>
+              Jelszó
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={inputClass}
+              autoComplete="new-password"
+              required
+            />
           </div>
-        </div>
 
-        <div className="mt-8 bg-yellow-900/30 border border-yellow-600/50 rounded-2xl p-4 backdrop-blur-sm">
-          <h3 className="text-yellow-400 font-semibold mb-2">⚠️ Biztonsági figyelmeztetés</h3>
-          <p className="text-sm text-[#9CA3AF]">
-            Ez az oldal csak fejlesztési célokra szolgál. Éles környezetben távolítsd el, vagy védd le megfelelően!
-          </p>
+          <div>
+            <label htmlFor="name" className={labelClass}>
+              Név
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={inputClass}
+              autoComplete="name"
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="secret" className={labelClass}>
+              Titkos kulcs
+            </label>
+            <input
+              id="secret"
+              type="password"
+              value={secret}
+              onChange={(e) => setSecret(e.target.value)}
+              className={inputClass}
+              required
+            />
+          </div>
+
+          <button type="submit" disabled={loading} className="btn btn-primary w-full">
+            {loading ? 'Létrehozás...' : 'Admin létrehozása'}
+          </button>
+        </form>
+
+        <div className="border border-white/10 bg-white/[0.02] p-6">
+          <h2 className="text-sm font-medium text-white/80">Console</h2>
+          <pre className="mt-4 whitespace-pre-wrap break-words font-mono text-xs leading-relaxed text-white/60">
+            {result || '> Várakozás...'}
+          </pre>
         </div>
       </div>
-    </div>
+
+      <p className="mt-6 text-xs leading-relaxed text-white/40">
+        Ez az oldal csak az első admin létrehozására való. Utána távolítsd el, vagy védd le.
+      </p>
+    </AuthShell>
   )
 }
