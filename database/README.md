@@ -25,10 +25,9 @@ A projekt **egyetlen sémaforrása** a [`prisma/schema.prisma`](../prisma/schema
    ```bash
    npm install
    npm run db:init
-   npm run db:generate
    ```
 
-   A `db:init` megnézi, hogy üres-e az adatbázis:
+   A `db:init` a Prisma Clientet is újragenerálja a friss sémából. Emellett megnézi, hogy üres-e az adatbázis:
    - üres: lefuttatja a migrációkat,
    - már van `_prisma_migrations`: lefuttatja a hiányzó migrációkat,
    - `database/schema.sql`-ből importált táblák vannak: kihagyja a migrációt.
@@ -45,7 +44,7 @@ A projekt **egyetlen sémaforrása** a [`prisma/schema.prisma`](../prisma/schema
 
 | Parancs | Mit csinál |
 | --- | --- |
-| `npm run db:init` | Ha üres a DB, létrehozza a táblákat; ha van migráció, futtatja (induláskor ez ajánlott) |
+| `npm run db:init` | Ha üres a DB, létrehozza a táblákat; futtatja a migrációkat és újragenerálja a Prisma Clientet (induláskor ez ajánlott) |
 | `npm run db:migrate` | A meglévő migrációk alkalmazása (éles környezet) |
 | `npm run db:push` | A séma szinkronizálása migráció nélkül (fejlesztéshez, gyors) |
 | `npm run db:generate` | Prisma Client újragenerálása |

@@ -67,10 +67,9 @@ A teljes sémát a Prisma kezeli. Üres adatbázison:
 
 ```bash
 npm run db:init
-npm run db:generate
 ```
 
-A `db:init` üres adatbázison létrehozza a táblákat, meglévő adatbázison csak a hiányzó migrációkat futtatja.
+A `db:init` üres adatbázison létrehozza a táblákat, meglévő adatbázison csak a hiányzó migrációkat futtatja, és újragenerálja a Prisma Clientet.
 
 Ha inkább egy SQL fájlt importálnál, használd a `database/schema.sql`-t. Részletek: [`database/README.md`](database/README.md).
 

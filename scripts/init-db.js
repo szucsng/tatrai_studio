@@ -30,32 +30,29 @@ async function main() {
 
   if (tables.length === 0) {
     console.log('Az adatbázis üres, migráció futtatása...')
-    runMigrations()
-    return
-  }
-
-  if (hasMigrations) {
+    runPrisma(['migrate', 'deploy'])
+  } else if (hasMigrations) {
     console.log('Meglévő adatbázis, esetleges új migrációk futtatása...')
-    runMigrations()
-    return
-  }
-
-  if (hasAppTables) {
+    runPrisma(['migrate', 'deploy'])
+  } else if (hasAppTables) {
     console.log('Az adatbázis már tartalmaz táblákat (pl. schema.sql import), migráció kihagyva.')
-    return
+  } else {
+    console.log('Az adatbázis nem üres, de nem ismert alkalmazás-séma. Migráció kihagyva.')
   }
 
-  console.log('Az adatbázis nem üres, de nem ismert alkalmazás-séma. Migráció kihagyva.')
+  // A Prisma Clientet minden induláskor a friss sémából generáljuk.
+  console.log('Prisma Client generálása...')
+  runPrisma(['generate'])
 }
 
-function runMigrations() {
-  const result = spawnSync('npx', ['prisma', 'migrate', 'deploy'], {
+function runPrisma(args) {
+  const result = spawnSync('npx', ['prisma', ...args], {
     stdio: 'inherit',
     env: process.env,
   })
 
   if (result.error) {
-    console.error('❌ A migráció indítása sikertelen:', result.error.message)
+    console.error(`❌ A prisma ${args.join(' ')} indítása sikertelen:`, result.error.message)
     process.exit(1)
   }
 

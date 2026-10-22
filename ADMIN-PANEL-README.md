@@ -96,7 +96,6 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ```bash
 npm run db:init
-npm run db:generate
 ```
 
 ### 6. Alkalmazás indítása

@@ -152,7 +152,6 @@ A séma egységes forrása a `prisma/schema.prisma`. Futtasd a migrációkat:
 
 ```bash
 npm run db:init
-npm run db:generate
 ```
 
 Üres adatbázison migráció nélkül is szinkronizálhatsz:

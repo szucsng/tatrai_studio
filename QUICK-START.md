@@ -6,7 +6,6 @@ A táblákat a Prisma hozza létre az egységes sémából:
 
 ```bash
 npm run db:init
-npm run db:generate
 ```
 
 Üres adatbázison migráció nélkül is szinkronizálhatod:
@@ -80,7 +79,6 @@ npm run dev
 **Megoldás**:
 ```bash
 npm run db:init
-npm run db:generate
 ```
 
 ### Token lejárt

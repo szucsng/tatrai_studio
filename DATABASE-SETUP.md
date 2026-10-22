@@ -25,11 +25,10 @@ DATABASE_URL="mysql://FELHASZNALO:JELSZO@HOST:3306/ADATBAZIS"
 ```bash
 npm install
 npm run db:init
-npm run db:generate
 ```
 
 - `npm run db:init` üres adatbázison lefuttatja a migrációkat, meglévő adatbázison csak a hiányzó migrációkat.
-- `npm run db:generate` legenerálja a Prisma Clientet.
+- Ugyanez a parancs újragenerálja a Prisma Clientet is, így nem marad elavult kliens a build előtt.
 
 Ugyanez automatikusan lefut a Pterodactyl indulásakor, ha a startup commandban szerepel a `npm run db:init`.
 
