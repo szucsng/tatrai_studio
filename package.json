@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 2736",
+    "dev": "next dev -p 5102",
     "build": "next build",
-    "start": "next start -p 2736",
+    "start": "next start -p 5102",
+    "deploy": "git pull --ff-only origin main && npm install && npm run build && pm2 startOrRestart ecosystem.config.js --update-env",
     "lint": "eslint",
     "create-admin": "tsx scripts/create-admin.ts"
   },

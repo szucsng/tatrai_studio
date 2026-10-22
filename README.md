@@ -48,7 +48,7 @@ DATABASE_URL="mysql://USER:PASSWORD@HOST:3306/DBNAME"
 
 # Better Auth
 BETTER_AUTH_SECRET="valami-eros-titok-valtoztasd-meg"
-BETTER_AUTH_URL="http://localhost:2736"
+BETTER_AUTH_URL="http://localhost:5102"
 
 # Email (SMTP)
 SMTP_HOST="smtp.example.com"
@@ -77,7 +77,7 @@ npm run create-admin
 Vagy az API-n keresztül (szerver futása közben):
 
 ```bash
-curl -X POST http://localhost:2736/api/setup/create-admin \
+curl -X POST http://localhost:5102/api/setup/create-admin \
   -H "Content-Type: application/json" \
   -d "{\"name\":\"Admin\",\"email\":\"admin@example.com\",\"password\":\"admin123\",\"secret\":\"admin-setup-secret\"}"
 ```
@@ -88,20 +88,20 @@ curl -X POST http://localhost:2736/api/setup/create-admin \
 npm run dev
 ```
 
-Az alkalmazás elérhető: [http://localhost:2736](http://localhost:2736)
+Az alkalmazás elérhető: [http://localhost:5102](http://localhost:5102)
 
 ## Használat
 
 ### Főoldal
-- `http://localhost:2736` – bemutatkozó oldal 3D animált háttérrel
+- `http://localhost:5102` – bemutatkozó oldal 3D animált háttérrel
 
 ### Galéria
-- `http://localhost:2736/galeria` – összes esemény listája
+- `http://localhost:5102/galeria` – összes esemény listája
 - Eseményre kattintva megnyílnak a képek lightbox nézetben
 
 ### Admin Felület
 
-1. **Bejelentkezés:** `http://localhost:2736/admin/login`
+1. **Bejelentkezés:** `http://localhost:5102/admin/login`
 2. **Esemény kezelés:** új esemény létrehozása, meglévők szerkesztése/törlése
 3. **Képfeltöltés:** eseményhez képek feltöltése (JPEG, PNG, WebP) – automatikusan generálódik thumbnail és medium verzió
 4. **Felhasználók:** admin szintű felhasználók kezelése
@@ -198,6 +198,14 @@ npx prisma generate
 npm run build
 npm start
 ```
+
+### Frissítés GitHubról (éles szerver)
+
+```bash
+npm run deploy
+```
+
+Ez a parancs lehúzza a legújabb commitot a `main` ágról, telepíti a függőségeket, újrabuildeli az alkalmazást, majd újraindítja a PM2 processzt (`tatrai`).
 
 ## Biztonság
 

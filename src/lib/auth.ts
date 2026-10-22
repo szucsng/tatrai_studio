@@ -11,13 +11,14 @@ export const auth = betterAuth({
     requireEmailVerification: false,
   },
   secret: process.env.BETTER_AUTH_SECRET || process.env.NEXTAUTH_SECRET,
-  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000",
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:5102",
   session: {
     updateAge: 60 * 60,
     expiresIn: 60 * 60 * 24 * 7,
   },
   trustedOrigins: [
-    process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:3000",
+    process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "http://localhost:5102",
+    "http://localhost:5102",
     "http://localhost:3000",
     "http://localhost:3001"
   ],
