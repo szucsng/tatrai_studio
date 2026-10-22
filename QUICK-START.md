@@ -5,7 +5,7 @@
 A táblákat a Prisma hozza létre az egységes sémából:
 
 ```bash
-npm run db:migrate
+npm run db:init
 npm run db:generate
 ```
 
@@ -79,7 +79,7 @@ npm run dev
 
 **Megoldás**:
 ```bash
-npm run db:migrate
+npm run db:init
 npm run db:generate
 ```
 

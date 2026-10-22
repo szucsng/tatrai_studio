@@ -151,7 +151,7 @@ model User {
 A séma egységes forrása a `prisma/schema.prisma`. Futtasd a migrációkat:
 
 ```bash
-npm run db:migrate
+npm run db:init
 npm run db:generate
 ```
 

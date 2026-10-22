@@ -24,12 +24,14 @@ DATABASE_URL="mysql://FELHASZNALO:JELSZO@HOST:3306/ADATBAZIS"
 
 ```bash
 npm install
-npm run db:migrate
+npm run db:init
 npm run db:generate
 ```
 
-- `npm run db:migrate` a `prisma/migrations/` migrációit futtatja, üres adatbázison ez hozza létre a táblákat.
+- `npm run db:init` üres adatbázison lefuttatja a migrációkat, meglévő adatbázison csak a hiányzó migrációkat.
 - `npm run db:generate` legenerálja a Prisma Clientet.
+
+Ugyanez automatikusan lefut a Pterodactyl indulásakor, ha a startup commandban szerepel a `npm run db:init`.
 
 Ha inkább egyetlen SQL fájlt importálnál, töltsd be a `database/schema.sql` fájlt phpMyAdminban, vagy:
 

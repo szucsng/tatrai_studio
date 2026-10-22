@@ -20,15 +20,20 @@ A projekt **egyetlen sémaforrása** a [`prisma/schema.prisma`](../prisma/schema
 
    A jelszóban lévő speciális karaktereket URL-kódolni kell (pl. `@` → `%40`).
 
-3. Telepítsd a függőségeket, majd hozd létre a táblákat:
+3. Telepítsd a függőségeket, majd inicializáld az adatbázist:
 
    ```bash
    npm install
-   npm run db:migrate
+   npm run db:init
    npm run db:generate
    ```
 
-   Ha a Prisma migráció helyett inkább egyben importálnád a sémát, töltsd be a `database/schema.sql` fájlt phpMyAdminban vagy:
+   A `db:init` megnézi, hogy üres-e az adatbázis:
+   - üres: lefuttatja a migrációkat,
+   - már van `_prisma_migrations`: lefuttatja a hiányzó migrációkat,
+   - `database/schema.sql`-ből importált táblák vannak: kihagyja a migrációt.
+
+   Ha inkább egyetlen SQL fájlt importálnál, töltsd be a `database/schema.sql` fájlt phpMyAdminban vagy:
 
    ```bash
    mysql -u FELHASZNALO -p ADATBAZIS < database/schema.sql
@@ -40,11 +45,22 @@ A projekt **egyetlen sémaforrása** a [`prisma/schema.prisma`](../prisma/schema
 
 | Parancs | Mit csinál |
 | --- | --- |
-| `npm run db:migrate` | A meglévő migrációk alkalmazása (éles környezet, ajánlott) |
+| `npm run db:init` | Ha üres a DB, létrehozza a táblákat; ha van migráció, futtatja (induláskor ez ajánlott) |
+| `npm run db:migrate` | A meglévő migrációk alkalmazása (éles környezet) |
 | `npm run db:push` | A séma szinkronizálása migráció nélkül (fejlesztéshez, gyors) |
 | `npm run db:generate` | Prisma Client újragenerálása |
 | `npm run db:studio` | Prisma Studio az adatok böngészéséhez |
 | `npm run db:test` | MySQL kapcsolat és a táblák ellenőrzése |
+
+## Automatikus inicializálás induláskor
+
+A Pterodactyl startup commandba tedd bele a `db:init`-et a build elé:
+
+```bash
+bash -c "git pull --ff-only origin main && npm install --include=dev && npm run db:init && npm run build && exec npm start"
+```
+
+Így üres adatbázisnál automatikusan létrejönnek a táblák, meglévő adatbázisnál pedig csak a szükséges migrációk futnak le.
 
 ## Séma módosítása
 

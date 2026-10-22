@@ -95,7 +95,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ### 5. Adatbázis és Prisma Client
 
 ```bash
-npm run db:migrate
+npm run db:init
 npm run db:generate
 ```
 
