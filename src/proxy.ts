@@ -11,8 +11,10 @@ export default async function proxy(request: NextRequest) {
   // Public admin pages that don't require authentication
   const isPublicAdminPage = isLoginPage || isForgotPassword || isResetPassword || isVerifyEmail
   
-  // Check if user has session cookie
-  const sessionCookie = request.cookies.get('better-auth.session_token')
+  // HTTPS-en a better-auth a __Secure- előtaggal teszi ki a sütit
+  const sessionCookie =
+    request.cookies.get('__Secure-better-auth.session_token') ??
+    request.cookies.get('better-auth.session_token')
   const isLoggedIn = !!sessionCookie
 
   if (isAdminRoute && !isPublicAdminPage && !isLoggedIn) {
