@@ -11,6 +11,11 @@ import { GalleryFooter, GalleryHeader } from '@/components/GalleryChrome'
 import { formatEventDate } from '@/lib/format'
 import { isVideoFile } from '@/lib/media'
 
+function withVersion(url: string | null | undefined, version: string): string {
+  if (!url) return ''
+  return `${url}${url.includes('?') ? '&' : '?'}v=${encodeURIComponent(version)}`
+}
+
 interface Image {
   id: string
   filename: string
@@ -153,15 +158,14 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
         }
       }
 
+      const extension = image.filename.split('.').pop()?.toLowerCase() || ''
+      const browserSafe = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif', 'bmp'].includes(extension)
+      const largeSrc = browserSafe
+        ? image.path
+        : image.mediumPath || image.thumbPath || image.path
+
       return {
-        src: image.path,
-        srcSet: image.mediumPath
-          ? [
-              { src: image.thumbPath || image.path, width: 300, height: 300 },
-              { src: image.mediumPath, width: 800, height: 800 },
-              { src: image.path, width: 3840, height: 2160 },
-            ]
-          : undefined,
+        src: withVersion(largeSrc, image.id),
         alt: image.filename,
         width: 3840,
         height: 2160,
@@ -280,7 +284,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                           </div>
                         ) : (
                           <img
-                            src={image.thumbPath || image.mediumPath || image.path}
+                            src={withVersion(image.thumbPath || image.mediumPath || image.path, image.id)}
                             alt=""
                             loading="lazy"
                             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"

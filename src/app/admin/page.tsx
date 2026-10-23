@@ -12,7 +12,7 @@ type Event = {
   name: string
   description: string | null
   date: string
-  images: { id: string; filename: string; path: string; thumbPath?: string; createdAt?: string }[]
+  images: { id: string; filename: string; path: string; thumbPath?: string; mediumPath?: string | null; createdAt?: string }[]
   organizers?: { user: { id: string; name: string; email: string } }[]
 }
 
@@ -807,7 +807,7 @@ export default function AdminPage() {
                                     </div>
                                   ) : (
                                     <Image
-                                      src={image.thumbPath ? `${image.thumbPath}?t=${Date.now()}` : `${image.path}?t=${Date.now()}`}
+                                      src={`${image.thumbPath || image.mediumPath || image.path}?t=${Date.now()}`}
                                       alt={image.filename}
                                       fill
                                       quality={100}
