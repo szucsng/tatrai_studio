@@ -403,7 +403,7 @@ export default function AdminPage() {
       <div className="grain" />
       <div className="fixed inset-0 -z-10 bg-[#0b1016]" />
       
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b1016]">
+      <div className="sticky top-0 z-50 border-b border-white/10 bg-[#0b1016]">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 md:px-8">
           <div className="flex flex-wrap items-center gap-2">
             <Image
@@ -494,7 +494,7 @@ export default function AdminPage() {
             )}
           </nav>
         </div>
-      </header>
+      </div>
 
       <main className="mx-auto w-full max-w-6xl px-4 py-8 md:px-8 md:py-12">
         {/* Dashboard Tab */}
