@@ -45,7 +45,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
 
     setError(null)
 
-    fetch(`/api/events/${id}`)
+    fetch(`/api/events/${id}`, { cache: 'no-store' })
       .then(async (response) => {
         if (!response.ok) {
           throw new Error('Nem sikerült betölteni az eseményt.')

@@ -100,7 +100,7 @@ export default function AdminPage() {
 
   const loadEvents = async () => {
     try {
-      const response = await fetch('/api/admin/events')
+      const response = await fetch('/api/admin/events', { cache: 'no-store' })
       if (response.ok) {
         const data = await response.json()
         setEvents(data)
@@ -112,7 +112,7 @@ export default function AdminPage() {
 
   const loadUsers = async () => {
     try {
-      const response = await fetch('/api/admin/users')
+      const response = await fetch('/api/admin/users', { cache: 'no-store' })
       if (response.ok) {
         const data = await response.json()
         setUsers(data)

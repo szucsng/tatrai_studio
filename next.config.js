@@ -8,4 +8,14 @@ module.exports = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/uploads/:path*',
+          destination: '/api/uploads/:path*',
+        },
+      ],
+    };
+  },
 };

@@ -8,6 +8,7 @@ import { headers } from 'next/headers'
 import sharp from 'sharp'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 export async function PUT(
   request: Request,
