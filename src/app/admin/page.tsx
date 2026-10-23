@@ -393,66 +393,71 @@ export default function AdminPage() {
     router.push('/')
   }
 
+  const adminTabClass = (isActive: boolean) =>
+    `flex shrink-0 items-center gap-2 border-b-2 px-0 py-3 text-sm transition-colors ${
+      isActive ? 'border-[#E0A458] text-[#E0A458]' : 'border-transparent text-white/55 hover:text-white/85'
+    }`
+
   return (
     <div className="min-h-screen relative">
       <div className="grain" />
       <div className="fixed inset-0 -z-10 bg-[#0b1016]" />
       
-      {/* Navigation */}
-      <nav className="bg-[#0b1016]/80 backdrop-blur-xl shadow-sm border-b border-white/10 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center gap-3">
-              <Image 
-                src="/logo.png" 
-                alt="Logo" 
-                width={50} 
-                height={50} 
-                priority
-                className="object-contain"
-              />
-              <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
-                Admin Panel
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0b1016]">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-4 md:px-8">
+          <div className="flex flex-wrap items-center gap-2">
+            <Image
+              src="/logo.png"
+              alt="Tátrai Levente"
+              width={36}
+              height={36}
+              priority
+              className="object-contain"
+            />
+            <div>
+              <Link href="/" className="block text-sm font-medium uppercase tracking-[0.16em] text-white/90">
+                Tátrai Levente
               </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link 
-                href="/galeria" 
-                className="text-[#f5f5f5] hover:text-[#C77B3F] px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-[#E0A458]/20 border border-transparent hover:border-[#E0A458]/30 flex items-center gap-2"
-              >
-                <GalleryIcon className="w-4 h-4" />
-                Galéria
-              </Link>
-              <div className="flex items-center space-x-3 px-4 py-2 bg-[#E0A458]/20 rounded-lg border border-[#E0A458]/30">
-                <div className="w-8 h-8 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] rounded-full flex items-center justify-center text-white font-bold">
-                  {user?.name?.charAt(0).toUpperCase() || 'A'}
-                </div>
-                <span className="text-sm font-medium text-[#f5f5f5]">{user?.name || 'Admin'}</span>
-              </div>
-              <button
-                onClick={handleLogout}
-                className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
-              >
-                Kijelentkezés
-              </button>
+              <span className="text-[11px] uppercase tracking-[0.2em] text-[#E0A458]">Admin</span>
             </div>
           </div>
-        </div>
-      </nav>
 
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {/* Tab Navigation */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-2 mb-8">
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Link
+              href="/galeria"
+              className="inline-flex items-center gap-2 border border-white/10 px-3 py-2 text-xs text-white/70 transition-colors hover:border-[#E0A458]/40 hover:text-[#E0A458]"
+            >
+              <GalleryIcon className="h-4 w-4" />
+              Galéria
+            </Link>
+
+            <div className="flex items-center gap-3 border border-white/10 bg-white/[0.03] px-3 py-1.5">
+              <div className="flex h-8 w-8 items-center justify-center bg-[#E0A458] text-sm font-semibold text-[#0b1016]">
+                {user?.name?.charAt(0).toUpperCase() || 'A'}
+              </div>
+              <div className="hidden sm:block">
+                <p className="text-xs font-medium text-white/85">{user?.name || 'Admin'}</p>
+                <p className="text-[10px] uppercase tracking-[0.14em] text-white/40">{user?.role || 'admin'}</p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleLogout}
+              className="border border-red-500/30 px-3 py-2 text-xs font-medium text-red-300 transition-colors hover:bg-red-500/10"
+            >
+              Kijelentkezés
+            </button>
+          </div>
+        </div>
+
+        <div className="mx-auto w-full max-w-6xl px-4 md:px-8">
+          <nav className="flex gap-6 overflow-x-auto" aria-label="Admin navigáció">
             <button
               onClick={() => setActiveTab('dashboard')}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-                activeTab === 'dashboard'
-                  ? 'bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] shadow-md'
-                  : 'text-[#f5f5f5] hover:bg-[#E0A458]/20'
-              }`}
+              aria-current={activeTab === 'dashboard' ? 'page' : undefined}
+              className={adminTabClass(activeTab === 'dashboard')}
             >
-              <CalendarIcon className={`w-5 h-5 ${activeTab === 'dashboard' ? 'text-[#0b0f18]' : 'text-[#C77B3F]'}`} />
+              <CalendarIcon className="h-4 w-4" />
               Dashboard
             </button>
             <button
@@ -460,24 +465,18 @@ export default function AdminPage() {
                 setActiveTab('events')
                 loadUsers()
               }}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-                activeTab === 'events'
-                  ? 'bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] shadow-md'
-                  : 'text-[#f5f5f5] hover:bg-[#E0A458]/20'
-              }`}
+              aria-current={activeTab === 'events' ? 'page' : undefined}
+              className={adminTabClass(activeTab === 'events')}
             >
-              <CalendarIcon className={`w-5 h-5 ${activeTab === 'events' ? 'text-[#0b0f18]' : 'text-[#C77B3F]'}`} />
+              <GalleryIcon className="h-4 w-4" />
               Események
             </button>
             <button
               onClick={() => setActiveTab('profile')}
-              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-                activeTab === 'profile'
-                  ? 'bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] shadow-md'
-                  : 'text-[#f5f5f5] hover:bg-[#E0A458]/20'
-              }`}
+              aria-current={activeTab === 'profile' ? 'page' : undefined}
+              className={adminTabClass(activeTab === 'profile')}
             >
-              <UsersIcon className={`w-5 h-5 ${activeTab === 'profile' ? 'text-[#0b0f18]' : 'text-[#C77B3F]'}`} />
+              <UsersIcon className="h-4 w-4" />
               Profil
             </button>
             {(user?.role === 'admin' || user?.role === 'organizer') && (
@@ -486,113 +485,83 @@ export default function AdminPage() {
                   setActiveTab('organizers')
                   loadUsers()
                 }}
-                className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-                  activeTab === 'organizers'
-                    ? 'bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] shadow-md'
-                    : 'text-[#f5f5f5] hover:bg-[#E0A458]/20'
-                }`}
+                aria-current={activeTab === 'organizers' ? 'page' : undefined}
+                className={adminTabClass(activeTab === 'organizers')}
               >
-                <UsersIcon className={`w-5 h-5 ${activeTab === 'organizers' ? 'text-[#0b0f18]' : 'text-[#C77B3F]'}`} />
+                <UsersIcon className="h-4 w-4" />
                 Szervezők
               </button>
             )}
-          </div>
+          </nav>
         </div>
+      </header>
 
+      <main className="mx-auto w-full max-w-6xl px-4 py-8 md:px-8 md:py-12">
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && (
-          <div className="space-y-8">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-gradient-to-br from-[#E0A458] to-[#C77B3F] rounded-2xl shadow-xl p-6 text-[#0b0f18]">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white/70 text-sm font-medium">Összes esemény</p>
-                    <p className="text-4xl font-bold mt-2">{stats.totalEvents}</p>
-                  </div>
-                  <div className="opacity-20">
-                    <CalendarIcon className="w-16 h-16 text-white" />
-                  </div>
-                </div>
+          <div className="space-y-10">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="border border-white/10 bg-white/[0.02] p-6">
+                <p className="text-xs uppercase tracking-[0.14em] text-white/45">Összes esemény</p>
+                <p className="mt-3 text-4xl font-light text-[#E0A458]">{stats.totalEvents}</p>
               </div>
-
-              <div className="bg-gradient-to-br from-[#C77B3F] to-[#E0A458] rounded-2xl shadow-xl p-6 text-[#0b0f18]">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white/70 text-sm font-medium">Összes fájl</p>
-                    <p className="text-4xl font-bold mt-2">{stats.totalImages}</p>
-                  </div>
-                  <div className="opacity-20">
-                    <GalleryIcon className="w-16 h-16 text-white" />
-                  </div>
-                </div>
+              <div className="border border-white/10 bg-white/[0.02] p-6">
+                <p className="text-xs uppercase tracking-[0.14em] text-white/45">Összes fájl</p>
+                <p className="mt-3 text-4xl font-light text-[#E0A458]">{stats.totalImages}</p>
               </div>
-
-              <div className="bg-gradient-to-br from-[#E0A458] to-[#EDB56B] rounded-2xl shadow-xl p-6 text-[#0b0f18]">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white/70 text-sm font-medium">Új események (30 nap)</p>
-                    <p className="text-4xl font-bold mt-2">{stats.recentEvents}</p>
-                  </div>
-                  <div className="text-5xl opacity-20">✨</div>
-                </div>
+              <div className="border border-white/10 bg-white/[0.02] p-6">
+                <p className="text-xs uppercase tracking-[0.14em] text-white/45">Új események (30 nap)</p>
+                <p className="mt-3 text-4xl font-light text-[#E0A458]">{stats.recentEvents}</p>
               </div>
             </div>
 
-            {/* Recent Events */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
-                Legutóbbi események
-              </h2>
-              {events.slice(0, 5).length === 0 ? (
-                <p className="text-[#9CA3AF] text-center py-8">Még nincsenek események</p>
-              ) : (
-                <div className="space-y-4">
-                  {events.slice(0, 5).map((event) => (
-                    <div key={event.id} className="flex items-center justify-between p-4 border border-white/10 rounded-xl hover:shadow-md transition-all bg-white/5">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-[#f5f5f5]">{event.name}</h3>
-                        <p className="text-sm text-[#9CA3AF]">
-                          {new Date(event.date).toLocaleDateString('hu-HU')} • {event.images.length} fájl
-                        </p>
+            <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr]">
+              <section className="border border-white/10 bg-white/[0.02] p-6 md:p-8">
+                <h2 className="text-xl font-light text-white/90">Legutóbbi események</h2>
+                {events.slice(0, 5).length === 0 ? (
+                  <p className="py-8 text-sm text-white/50">Még nincsenek események.</p>
+                ) : (
+                  <div className="mt-4 divide-y divide-white/10">
+                    {events.slice(0, 5).map((event) => (
+                      <div key={event.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0">
+                          <h3 className="truncate text-sm font-medium text-white/85">{event.name}</h3>
+                          <p className="mt-1 text-xs text-white/45">
+                            {new Date(event.date).toLocaleDateString('hu-HU')} · {event.images.length} fájl
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => handleEdit(event)}
+                          className="shrink-0 border border-white/15 px-4 py-2 text-xs text-white/70 transition-colors hover:border-[#E0A458]/40 hover:text-[#E0A458]"
+                        >
+                          Szerkesztés
+                        </button>
                       </div>
-                      <button
-                        onClick={() => handleEdit(event)}
-                        className="px-4 py-2 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] text-[#0b0f18] rounded-lg text-sm font-medium hover:shadow-lg transition-all"
-                      >
-                        Szerkesztés
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
-                Gyors műveletek
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button
-                  onClick={() => setActiveTab('events')}
-                  className="p-6 border-2 border-[#E0A458]/50 rounded-xl hover:border-[#E0A458] hover:bg-[#E0A458]/20 transition-all text-left"
-                >
-                  <div className="text-3xl mb-2">➕</div>
-                  <h3 className="font-semibold text-[#f5f5f5] mb-1">Új esemény létrehozása</h3>
-                  <p className="text-sm text-[#9CA3AF]">Hozz létre új eseményt képekkel és videókkal</p>
-                </button>
-                <Link
-                  href="/galeria"
-                  className="p-6 border-2 border-[#C77B3F]/50 rounded-xl hover:border-[#C77B3F] hover:bg-[#C77B3F]/20 transition-all text-left"
-                >
-                  <div className="flex justify-center mb-2">
-                    <GalleryIcon className="w-8 h-8 text-[#C77B3F]" />
+                    ))}
                   </div>
-                  <h3 className="font-semibold text-[#f5f5f5] mb-1">Galéria megtekintése</h3>
-                  <p className="text-sm text-[#9CA3AF]">Nézd meg a nyilvános galériát</p>
-                </Link>
-              </div>
+                )}
+              </section>
+
+              <section className="border border-white/10 bg-white/[0.02] p-6 md:p-8">
+                <h2 className="text-xl font-light text-white/90">Gyors műveletek</h2>
+                <div className="mt-4 space-y-3">
+                  <button
+                    onClick={() => {
+                      setActiveTab('events')
+                      loadUsers()
+                    }}
+                    className="w-full border border-white/10 px-4 py-3 text-left text-sm text-white/75 transition-colors hover:border-[#E0A458]/40 hover:text-white"
+                  >
+                    Új esemény létrehozása
+                  </button>
+                  <Link
+                    href="/galeria"
+                    className="block w-full border border-white/10 px-4 py-3 text-sm text-white/75 transition-colors hover:border-[#E0A458]/40 hover:text-white"
+                  >
+                    Galéria megtekintése
+                  </Link>
+                </div>
+              </section>
             </div>
           </div>
         )}
@@ -601,20 +570,20 @@ export default function AdminPage() {
         {activeTab === 'events' && (
           <div className="space-y-8">
             {/* Create/Edit Form */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
+            <div className="max-w-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8">
+              <h2 className="text-xl font-light text-white/90 mb-6">
                 {editingEvent ? 'Esemény szerkesztése' : 'Új esemény létrehozása'}
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
-                  <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl backdrop-blur-sm">
+                  <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl">
                     {error}
                   </div>
                 )}
 
                 {success && (
-                  <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-xl backdrop-blur-sm">
+                  <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-xl">
                     {success}
                   </div>
                 )}
@@ -760,8 +729,8 @@ export default function AdminPage() {
             </div>
 
             {/* Events List */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
+            <div className="border border-white/10 bg-white/[0.02] p-6 md:p-8">
+              <h2 className="text-xl font-light text-white/90 mb-6">
                 Meglévő események ({events.length})
               </h2>
 
@@ -777,8 +746,8 @@ export default function AdminPage() {
               ) : (
                 <div className="space-y-4">
                   {events.map((event) => (
-                    <div key={event.id} className="border border-white/10 rounded-xl p-6 hover:shadow-lg transition-all hover:border-[#E0A458]/50 bg-white/5">
-                      <div className="flex justify-between items-start mb-4">
+                    <div key={event.id} className="border border-white/10 bg-white/[0.02] p-5 transition-colors hover:border-[#E0A458]/40 md:p-6">
+                      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div className="flex-1">
                           <h3 className="text-xl font-semibold text-[#f5f5f5] mb-2">{event.name}</h3>
                           {event.description && (
@@ -807,7 +776,7 @@ export default function AdminPage() {
                             </div>
                           )}
                         </div>
-                        <div className="flex gap-2 ml-4">
+                        <div className="flex shrink-0 gap-2">
                           <button
                             onClick={() => handleEdit(event)}
                             className="bg-gradient-to-r from-[#E0A458] to-[#C77B3F] hover:from-[#EDB56B] hover:to-[#D48A4A] text-[#0b0f18] px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-md hover:shadow-lg"
@@ -826,7 +795,7 @@ export default function AdminPage() {
                       {event.images.length > 0 && (
                         <div className="mt-4">
                           <p className="text-sm font-medium text-[#9CA3AF] mb-3">Fájlok:</p>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                             {event.images.map((image) => (
                               <div key={image.id} className="relative group">
                                 <div className="relative aspect-square rounded-xl overflow-hidden bg-[#0b1016] shadow-md group-hover:shadow-lg transition-shadow">
@@ -872,41 +841,41 @@ export default function AdminPage() {
         {activeTab === 'profile' && (
           <div className="space-y-8">
             {/* Profile Info */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-3xl font-extrabold mb-8 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
+            <div className="border border-white/10 bg-white/[0.02] p-6 md:p-8">
+              <h2 className="text-xl font-light text-white/90 mb-6">
                 Profil beállítások
               </h2>
 
-              <div className="flex items-center space-x-6 mb-8 pb-8 border-b border-white/10">
+              <div className="flex flex-col gap-5 border-b border-white/10 pb-8 mb-8 sm:flex-row sm:items-center">
                 <div className="w-24 h-24 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl">
                   {user?.name?.charAt(0).toUpperCase() || 'A'}
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-[#f5f5f5]">{user?.name}</h3>
+                  <h3 className="text-xl font-light text-white/90">{user?.name}</h3>
                   <p className="text-[#9CA3AF]">{user?.email}</p>
                   <div className="mt-2">
                     {user?.emailVerified ? (
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-500/20 text-green-400">
-                        ✓ Email megerősítve
+                        Email megerősítve
                       </span>
                     ) : (
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-500/20 text-yellow-400">
-                        ⚠️ Email nincs megerősítve
+                        Email nincs megerősítve
                       </span>
                     )}
                   </div>
                 </div>
               </div>
 
-              <form onSubmit={handleProfileUpdate} className="space-y-6">
+              <form onSubmit={handleProfileUpdate} className="max-w-2xl space-y-6">
                 {error && (
-                  <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl backdrop-blur-sm">
+                  <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-xl">
                     {error}
                   </div>
                 )}
 
                 {success && (
-                  <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-xl backdrop-blur-sm">
+                  <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-xl">
                     {success}
                   </div>
                 )}
@@ -995,20 +964,20 @@ export default function AdminPage() {
             </div>
 
             {/* Account Info */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
+            <div className="border border-white/10 bg-white/[0.02] p-6 md:p-8">
+              <h2 className="text-xl font-light text-white/90 mb-6">
                 Fiók információk
               </h2>
               <div className="space-y-4 text-sm">
                 <div className="flex justify-between py-3 border-b border-white/10">
                   <span className="text-[#9CA3AF]">Fiók létrehozva:</span>
                   <span className="font-medium text-[#f5f5f5]">
-                    {user ? new Date().toLocaleDateString('hu-HU') : '-'}
+                    {user?.createdAt ? new Date(user.createdAt).toLocaleDateString('hu-HU') : '-'}
                   </span>
                 </div>
                 <div className="flex justify-between py-3 border-b border-white/10">
                   <span className="text-[#9CA3AF]">Szerepkör:</span>
-                  <span className="font-medium text-[#f5f5f5]">Adminisztrátor</span>
+                  <span className="font-medium text-[#f5f5f5]">{user?.role === 'admin' ? 'Adminisztrátor' : user?.role === 'organizer' ? 'Szervező' : 'Felhasználó'}</span>
                 </div>
                 <div className="flex justify-between py-3">
                   <span className="text-[#9CA3AF]">Email státusz:</span>
@@ -1024,8 +993,8 @@ export default function AdminPage() {
         {/* Organizers Tab */}
         {activeTab === 'organizers' && (
           <div className="space-y-8">
-            <div className="bg-white/5 backdrop-blur-sm rounded-2xl shadow-xl border border-white/10 p-8">
-              <h2 className="text-2xl font-extrabold mb-6 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] bg-clip-text text-transparent">
+            <div className="border border-white/10 bg-white/[0.02] p-6 md:p-8">
+              <h2 className="text-xl font-light text-white/90 mb-6">
                 Szervezők kezelése
               </h2>
               
@@ -1040,7 +1009,7 @@ export default function AdminPage() {
                   users.filter(u => u.role !== 'admin').map((u) => (
                     <div 
                       key={u.id} 
-                      className="flex items-center justify-between p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"
+                      className="flex flex-col gap-4 border border-white/10 bg-white/[0.02] p-4 sm:flex-row sm:items-center sm:justify-between"
                     >
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-gradient-to-r from-[#E0A458] to-[#C77B3F] rounded-full flex items-center justify-center text-white font-bold text-lg">
@@ -1050,17 +1019,17 @@ export default function AdminPage() {
                           <h3 className="font-semibold text-[#f5f5f5]">{u.name}</h3>
                           <p className="text-sm text-[#9CA3AF]">{u.email}</p>
                           {u.emailVerified ? (
-                            <span className="text-xs text-green-400">✓ Email megerősítve</span>
+                            <span className="text-xs text-green-400">Email megerősítve</span>
                           ) : (
-                            <span className="text-xs text-yellow-400">⚠ Email nincs megerősítve</span>
+                            <span className="text-xs text-yellow-400">Email nincs megerősítve</span>
                           )}
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
                         {u.role === 'organizer' && (
                           <span className="text-xs bg-green-500/20 text-green-400 px-3 py-1 rounded-full font-medium">
-                            ✓ Szervező
+                            Szervező
                           </span>
                         )}
                         {u.id === user?.id && (
@@ -1087,7 +1056,7 @@ export default function AdminPage() {
             </div>
           </div>
         )}
-      </div>
+      </main>
     </div>
   )
 }
