@@ -14,7 +14,64 @@ export default function Home(): React.ReactElement {
   const year = new Date().getFullYear();
 
   useEffect(() => {
-    // External script in layout handles interactive features (before/after, menus, etc.)
+    const restartMarquee = () => {
+      document.querySelectorAll<HTMLElement>('.marquee-track').forEach((track) => {
+        track.style.animation = 'none'
+        void track.offsetWidth
+        track.style.animation = ''
+      })
+    }
+
+    const playVideos = () => {
+      document.querySelectorAll<HTMLVideoElement>('video').forEach((video) => {
+        video.muted = true
+        video.defaultMuted = true
+        video.loop = true
+        video.playsInline = true
+        const promise = video.play()
+        if (promise) promise.catch(() => {})
+      })
+    }
+
+    const handleVideoPause = (event: Event) => {
+      const video = event.target as HTMLVideoElement
+      if (document.visibilityState === 'visible' && video.isConnected && !video.ended) {
+        const promise = video.play()
+        if (promise) promise.catch(() => {})
+      }
+    }
+
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        restartMarquee()
+      }
+      playVideos()
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        playVideos()
+      }
+    }
+
+    const videos = Array.from(document.querySelectorAll<HTMLVideoElement>('video'))
+    videos.forEach((video) => {
+      video.addEventListener('pause', handleVideoPause)
+      video.addEventListener('canplay', playVideos)
+    })
+
+    window.addEventListener('pageshow', handlePageShow)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    playVideos()
+
+    return () => {
+      window.removeEventListener('pageshow', handlePageShow)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      videos.forEach((video) => {
+        video.removeEventListener('pause', handleVideoPause)
+        video.removeEventListener('canplay', playVideos)
+      })
+    }
   }, []);
 
   return (

@@ -417,7 +417,8 @@
     initHeroIntro();
     initStatsCountUp();
     initProofTabs();
-    initBrandMarquee();
+    // A logós szalagot a CSS animáció viszi, a JS-es klónozás ütközne vele.
+    // initBrandMarquee();
   };
 
   if (document.readyState !== 'loading') {
