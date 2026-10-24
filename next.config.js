@@ -8,6 +8,10 @@ module.exports = {
   turbopack: {
     root: path.resolve(__dirname),
   },
+  experimental: {
+    turbopackMemoryLimit: 512 * 1024 * 1024,
+    turbopackSourceMaps: false,
+  },
   async rewrites() {
     return {
       beforeFiles: [

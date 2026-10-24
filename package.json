@@ -6,6 +6,7 @@
     "dev": "next dev -p 5102",
     "prebuild": "prisma generate",
     "build": "next build",
+    "build:webpack": "prisma generate && next build --webpack",
     "start": "node scripts/init-db.js && exec next start -p 5102",
     "deploy": "git pull --ff-only origin main && npm install --include=dev && npm run build && pm2 startOrRestart ecosystem.config.js --update-env",
     "lint": "eslint",
