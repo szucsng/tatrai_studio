@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 
-type ActivePage = 'fooldal' | 'galeria' | 'kapcsolat'
+type ActivePage = 'galeria' | 'kapcsolat'
 
 export function SiteHeader({ active }: { active?: ActivePage }) {
   const activeClass = (page: ActivePage) => (page === active ? 'text-[#E0A458]' : undefined)
@@ -19,14 +19,12 @@ export function SiteHeader({ active }: { active?: ActivePage }) {
           </button>
           <ul>
             <li>
-              <Link href="/" className={activeClass('fooldal')} aria-current={active === 'fooldal' ? 'page' : undefined}>
-                Főoldal
+              <Link href="/galeria" className={activeClass('galeria')} aria-current={active === 'galeria' ? 'page' : undefined}>
+                Munkáim
               </Link>
             </li>
             <li>
-              <Link href="/galeria" className={activeClass('galeria')} aria-current={active === 'galeria' ? 'page' : undefined}>
-                Galéria
-              </Link>
+              <Link href="/#next">Rólam</Link>
             </li>
             <li>
               <Link href="/#faq" className={activeClass('kapcsolat')} aria-current={active === 'kapcsolat' ? 'page' : undefined}>
